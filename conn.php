@@ -8,12 +8,12 @@ if (!file_exists($autoloadPath)) {
 }
 require_once $autoloadPath;
 
-$isProduction = false;
+$isProduction = true;
 
 $productionConn = array(
     'servidor' => '10.15.1.120',
-    'usuario'  => 'root',
-    'senha'    => 'iRoE0IGyNBd0HKEEEKe3f34tgT2',
+    'usuario'  => 'app_user',
+    'senha'    => '6VSh6Q3Y9SNZ',
     'banco'    => 'labsoftt_sigma',
     'porta'    => 3306
 );
