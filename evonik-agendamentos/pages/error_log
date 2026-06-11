@@ -1,0 +1,4 @@
+[23-Sep-2023 14:36:49 America/Fortaleza] PHP Warning:  mysqli::__construct(): (HY000/1044): Access denied for user 'labsoftt_marcos'@'localhost' to database 'labsoftt_sigma' in /home2/labsoftt/public_html/sigma-solutions/conn.php on line 19
+[23-Sep-2023 14:36:49 America/Fortaleza] PHP Warning:  mysqli::set_charset(): Couldn't fetch mysqli in /home2/labsoftt/public_html/sigma-solutions/conn.php on line 20
+[23-Sep-2023 14:40:44 America/Fortaleza] PHP Warning:  mysqli::__construct(): (HY000/1044): Access denied for user 'labsoftt_marcos'@'localhost' to database 'labsoftt_sigma' in /home2/labsoftt/public_html/sigma-solutions/conn.php on line 19
+[23-Sep-2023 14:40:44 America/Fortaleza] PHP Warning:  mysqli::set_charset(): Couldn't fetch mysqli in /home2/labsoftt/public_html/sigma-solutions/conn.php on line 20

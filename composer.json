@@ -1,0 +1,17 @@
+{
+    "name": "labsoft/sigma",
+    "description": "Infraestrutura PHP para migracao gradual para Eloquent ORM.",
+    "require": {
+        "illuminate/database": "^11.0",
+        "illuminate/events": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Labsoft\\Models\\": "orm/Models/"
+        }
+    },
+    "config": {
+        "vendor-dir": "app_vendor",
+        "sort-packages": true
+    }
+}
