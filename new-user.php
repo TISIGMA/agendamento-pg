@@ -52,7 +52,7 @@ if(isset($_POST['usuario']) && $_POST['usuario'] != null){
 if(isset($_GET['edit'])&& $_GET['edit'] != null){
     $result = $usuario->buscarUsuario($_GET['edit'], $MySQLi);
 
-    while ($dados = $result->fetch_assoc()){ 
+    foreach(evonik_records_iter($result) as $dados){ 
         $usuario->setId($dados['user_id']);
         $usuario->setNome($dados['nome']);
         $usuario->setUsername($dados['username']);

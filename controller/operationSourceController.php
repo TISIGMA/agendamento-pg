@@ -32,7 +32,7 @@ class OperationSourceController{
 
             $result = $this->operationSourceRepository->findByName($name);
 
-            $count = $result->fetch_assoc() == null ? 0 : count((array)$result->fetch_assoc());
+            $count = $this->countRecords($result);
 
             if($count > 0) {
                 return 'ALREADY_EXISTS';
@@ -67,6 +67,19 @@ class OperationSourceController{
 
         $operationSources = array();
 
+        if (is_array($records) || $records instanceof Traversable) {
+            foreach ($records as $data) {
+                $operationSource = new OperationSource();
+                $operationSource->setId($this->getRecordValue($data, 'id'));
+                $operationSource->setName($this->getRecordValue($data, 'name'));
+                $operationSource->setLabel($this->getRecordValue($data, 'label'));
+                
+                array_push($operationSources, $operationSource);
+            }
+
+            return $operationSources;
+        }
+
         while ($data = $records->fetch_assoc()){ 
             $operationSource = new OperationSource();
             $operationSource->setId($data['id']);
@@ -84,6 +97,38 @@ class OperationSourceController{
         $label = str_replace(' ', '_', strtolower($name));
         $label = str_replace('ç', 'c', $label);
         return preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ñ)/","/(Ñ)/"), explode(" ","a e i o u n"), $label);
+    }
+
+    private function countRecords($records){
+        if (is_array($records)) {
+            return count($records);
+        }
+
+        if ($records instanceof Traversable) {
+            $count = 0;
+            foreach ($records as $_) {
+                $count++;
+            }
+            return $count;
+        }
+
+        if ($records instanceof mysqli_result) {
+            return $records->num_rows;
+        }
+
+        return 0;
+    }
+
+    private function getRecordValue($record, $field){
+        if (is_array($record) && array_key_exists($field, $record)) {
+            return $record[$field];
+        }
+
+        if (is_object($record) && isset($record->$field)) {
+            return $record->$field;
+        }
+
+        return null;
     }
 }
 ?>

@@ -152,7 +152,7 @@ if($_SESSION["tipo"] == "user"){
                                 <label>Tipo de Veículo</label>
                                 <select name="tipoVeiculo" class="form-control">
                                 <?php
-                                    while ($dados = $tipoVeiculo->fetch_assoc()){ 
+                                    foreach(evonik_records_iter($tipoVeiculo) as $dados){ 
                                         echo "<option value='".$dados['descricao']."'>".$dados['descricao']."</option>";
                                     }
                                 

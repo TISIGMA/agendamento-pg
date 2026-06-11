@@ -16,7 +16,7 @@
     $users = array();
     
     $count = 0;
-    while ($dados = $usuarios->fetch_assoc()){ 
+    foreach(evonik_records_iter($usuarios) as $dados){ 
         $usuario = new Usuario();
         $usuario->setId($dados['id']);
         $usuario->setNome($dados['nome']);

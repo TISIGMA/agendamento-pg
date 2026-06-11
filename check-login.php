@@ -3,15 +3,20 @@
 require_once('conn.php');
 require_once('session.php');
 
-$username =  $_POST['username'];
-$password =  $_POST['password'];
+$username = isset($_POST['username']) ? $_POST['username'] : '';
+$password = isset($_POST['password']) ? $_POST['password'] : '';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: index.php');
+    exit;
+}
 
 if (login($username, $password, $MySQLi) == true){  
-	checkNotification($MySQLi);      			   
-	echo "<script>window.location='home.php'</script>";	
-}else	{
-	echo '<script type="text/javascript">alert("ERRO: SENHA OU USUARIO INCORRETOS!'. $req_senha .'");</script>';
-	echo "<script>window.location='index.php'</script>";
+	checkNotification($MySQLi);
+    header('Location: home.php');
+    exit;
+} else {
+    header('Location: index.php?erro=login');
+    exit;
 }
 ?>

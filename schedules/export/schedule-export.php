@@ -3,9 +3,12 @@
 require_once('../../session.php');
 require_once('../../conn.php');
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 $startDate;
 $endDate;
 $status;
+$schedules = [];
 
 if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['endDate']) && $_GET['endDate'] != null)){
 
@@ -16,24 +19,48 @@ if((isset($_GET['startDate']) && $_GET['startDate'] != null) && (isset($_GET['en
     $startDate = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $startDate )));
     $endDate = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $endDate )));
 
-    if($status == 'Todos'){
-        $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta,operator,checker
-                FROM janela
-                WHERE cliente = '".$_SESSION['customerName']."'
-                AND data_agendamento >= '".$startDate."'
-                AND data_agendamento <= '".$endDate."'
-                ORDER BY data_agendamento";  
-    }else {
-        $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta,operator,checker
-                FROM janela
-                WHERE cliente = '".$_SESSION['customerName']."'
-                AND status = '".$status."' 
-                AND data_agendamento >= '".$startDate."'
-                AND data_agendamento <= '".$endDate."'
-                ORDER BY data_agendamento";  
+    $query = Capsule::table('janela')
+        ->select([
+            'id',
+            'data_agendamento',
+            'transportadora',
+            'status',
+            'tipoVeiculo',
+            'placa_cavalo',
+            'operacao',
+            'nf',
+            'horaChegada',
+            'inicio_operacao',
+            'fim_operacao',
+            'usuario',
+            'dataInclusao',
+            'peso',
+            'saida',
+            'separacao',
+            'shipment_id',
+            'do_s',
+            'cidade',
+            'carga_qtde',
+            'observacao',
+            'dados_gerais',
+            'cliente',
+            'doca',
+            'nome_motorista',
+            'placa_carreta2',
+            'documento_motorista',
+            'placa_carreta',
+            'operator',
+            'checker',
+        ])
+        ->where('cliente', $_SESSION['customerName'])
+        ->where('data_agendamento', '>=', $startDate)
+        ->where('data_agendamento', '<=', $endDate);
+
+    if ($status !== 'Todos') {
+        $query->where('status', $status);
     }
 
-    $schedules = $MySQLi->query($sql);
+    $schedules = $query->orderBy('data_agendamento')->get();
 }
 
 $file = '';
@@ -69,7 +96,8 @@ if($_SESSION['tipo'] != 'client'){
     $file .= '<th>Conferente</th>';
 }
 
-while ($data = $schedules->fetch_assoc()){ 
+foreach ($schedules as $data) {
+    $data = (array) $data;
     $file .= '<tr>';
     $file .= '<td>'.utf8_decode($data['status']).'</td>';
     $file .= '<td>'.utf8_decode(date("d/m/Y H:i:s", strtotime($data['data_agendamento']))).'</td>';

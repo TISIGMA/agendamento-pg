@@ -1,25 +1,13 @@
 <?php
+require_once __DIR__ . '/../conn.php';
 
-$MySQL = array(
-    'servidor' => 'localhost',  
-     'usuario' => 'root',   
-     'senha' => 'getnis2018',       
-     'banco' => 'sigmaScheduling'    
- );
- 
- $MySQLi = new MySQLi($MySQL['servidor'], $MySQL['usuario'], $MySQL['senha'], $MySQL['banco']);
+use Illuminate\Database\Capsule\Manager as Capsule;
 
-$sql = "SELECT nome FROM usuario";
-/*$result = $MySQLi->query($sql);
+$names = [];
 
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        echo "id: " . $row["nome"]. "<br>";
-    }
-} else {
-    echo "0 results";
-}*/
+$names = Capsule::table('usuario')->orderBy('nome')->pluck('nome')->toArray();
 
-echo $sql;
+header('Content-Type: text/plain; charset=utf-8');
+echo implode(PHP_EOL, $names);
 
 ?>

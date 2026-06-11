@@ -39,7 +39,7 @@ if(isset($_POST['nome']) && $_POST['nome'] != null){
 
 if(isset($_GET['edit'])&& $_GET['edit'] != null){
     $result = $transportadora->buscarTransportadora($_GET['edit'], $MySQLi);
-    while ($dados = $result->fetch_assoc()){ 
+    foreach(evonik_records_iter($result) as $dados){ 
         $transportadora->setId($dados['id']);
         $transportadora->setNome($dados['nome']);
         $transportadora->setUsername($dados['username']);
@@ -48,6 +48,7 @@ if(isset($_GET['edit'])&& $_GET['edit'] != null){
         $transportadora->setTelefone($dados['telefone']);
         $transportadora->setCelular($dados['celular']);
         $transportadora->setPassword($dados['password']);
+        break;
     }
 }
 

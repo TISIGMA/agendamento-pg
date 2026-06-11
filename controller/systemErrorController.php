@@ -164,22 +164,70 @@ class SystemErrorController{
 
         $systemErrors = array();
 
-        while ($data = $records->fetch_assoc()){ 
+        foreach ($this->getRecordsIterator($records) as $data){
             $systemError = new SystemError();
-            $systemError->setId($data['errorId']);
-            $systemError->setUserId($data['user_id']);
-            $systemError->setUserName($data['user_name']);
-            $systemError->setEmail($data['contact_email']);
-            $systemError->setCreatedDate(date("d/m/Y H:i:s", strtotime($data['created_date'])));
-            $systemError->setDescription($data['description']);
-            $systemError->setStatus($data['status']);
-            $systemError->setResolution($data['resolution']);
-            $systemError->setFileName($data['attachment_name']);
+            $systemError->setId($this->getRecordValue($data, 'errorId'));
+            $systemError->setUserId($this->getRecordValue($data, 'user_id'));
+            $systemError->setUserName($this->getRecordValue($data, 'user_name'));
+            $systemError->setEmail($this->getRecordValue($data, 'contact_email'));
+            $systemError->setCreatedDate($this->formatDateTime($this->getRecordValue($data, 'created_date')));
+            $systemError->setDescription($this->getRecordValue($data, 'description'));
+            $systemError->setStatus($this->getRecordValue($data, 'status'));
+            $systemError->setResolution($this->getRecordValue($data, 'resolution'));
+            $systemError->setFileName($this->getRecordValue($data, 'attachment_name'));
     
             array_push($systemErrors, $systemError);
         }
 
         return $systemErrors;
+    }
+
+    private function getRecordsIterator($records){
+        if ($records instanceof mysqli_result) {
+            while ($row = $records->fetch_assoc()) {
+                yield $row;
+            }
+            return;
+        }
+
+        if (is_array($records)) {
+            foreach ($records as $row) {
+                yield $row;
+            }
+            return;
+        }
+
+        if ($records instanceof Traversable) {
+            foreach ($records as $row) {
+                yield $row;
+            }
+            return;
+        }
+    }
+
+    private function getRecordValue($record, $field){
+        if (is_array($record) && array_key_exists($field, $record)) {
+            return $record[$field];
+        }
+
+        if (is_object($record) && isset($record->$field)) {
+            return $record->$field;
+        }
+
+        return null;
+    }
+
+    private function formatDateTime($value){
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        $timestamp = strtotime($value);
+        if ($timestamp === false) {
+            return '';
+        }
+
+        return date('d/m/Y H:i:s', $timestamp);
     }
 }
 

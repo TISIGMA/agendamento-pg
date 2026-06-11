@@ -22,7 +22,7 @@ class ScheduleController{
         $this->mySql = $mySql;
         $this->scheduleRepository = new ScheduleRepository($this->mySql);
         $this->attachmentRepository = new AttachmentRepository($this->mySql);
-        $this->$scheduleLogRepository = new ScheduleLogRepository($this->mySql);
+        $this->scheduleLogRepository = new ScheduleLogRepository($this->mySql);
         $this->attachmentLogRepository = new AttachmentLogRepository($this->mySql);
     }
 
@@ -59,13 +59,13 @@ class ScheduleController{
         try {
             $result = $this->scheduleRepository->findById($id);
 
-            if($result->num_rows == 0) return;
+            if($this->countRecords($result) == 0) return;
 
             $data = $this->loadData($result);
             $this->scheduleRepository->delete($id);
 
             // salvar registro de log de exclusão
-            return $this->$scheduleLogRepository->save($data[0]);
+            return $this->scheduleLogRepository->save($data[0]);
         } catch (Exception $e) {
             return 'DELETE_ERROR';
         }
@@ -112,6 +112,8 @@ class ScheduleController{
 
     public function findByClientStatusStartDateAndEndDate($client, $status, $startDate, $endDate){
 
+        $originalStartDate = $startDate;
+        $originalEndDate = $endDate;
         $startDate = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $startDate )));
         $endDate = date("Y-m-d H:i:s", strtotime(str_replace('/', '-', $endDate )));
 
@@ -122,6 +124,10 @@ class ScheduleController{
         }
 
         $data = $this->loadDataByNameValue($result);
+
+        // #region debug-point B:schedule-query-result
+        $__dbg=@parse_ini_file(__DIR__ . '/../.dbg/schedule-empty-data.env'); @file_get_contents(($__dbg['DEBUG_SERVER_URL'] ?? 'http://127.0.0.1:7777/event'), false, stream_context_create(['http'=>['method'=>'POST','header'=>"Content-Type: application/json\r\n",'content'=>json_encode(['sessionId'=>($__dbg['DEBUG_SESSION_ID'] ?? 'schedule-empty-data'),'runId'=>'pre-fix','hypothesisId'=>'B','location'=>'controller/scheduleController.php','msg'=>'[DEBUG] schedule query result','data'=>['client'=>$client,'status'=>$status,'original_start'=>$originalStartDate,'original_end'=>$originalEndDate,'query_start'=>$startDate,'query_end'=>$endDate,'result_count'=>count($data),'first_id'=>(count($data) > 0 && isset($data[0]['getId']) ? $data[0]['getId'] : null),'session_customer'=>(isset($_SESSION['customerName']) ? $_SESSION['customerName'] : null)],'ts'=>round(microtime(true)*1000)])]]));
+        // #endregion
 
         return $data;
     }
@@ -239,7 +245,7 @@ class ScheduleController{
         $columnsPreferencesRepository = new ColumnsPreferencesRepository($this->mySql);
         $result = $columnsPreferencesRepository->findByUser($_SESSION['id']);
 
-        if($result->num_rows == 0) return new ColumnsPreference();
+        if($this->countRecords($result) == 0) return new ColumnsPreference();
 
         return $this->loadPreferenceData($result);
     }
@@ -266,9 +272,17 @@ class ScheduleController{
 
         $paths = array();
 
-        while ($data = $result->fetch_assoc()){ 
-            $date = (str_contains($data['created_date'], '0000') || $data['created_date'] == null) ? '' : date("d/m/Y H:i", strtotime($data['created_date']));
-            $paths[$data['id']] = ['id' => $data['id'], 'type'=> $data['type'], 'path' => $data['path'], 'datetime' => $date];
+        foreach ($this->getRecordsIterator($result) as $data){
+            $createdDate = $this->getRecordValue($data, 'created_date');
+            $date = ($createdDate == null || str_contains($createdDate, '0000')) ? '' : date("d/m/Y H:i", strtotime($createdDate));
+
+            $id = $this->getRecordValue($data, 'id');
+            $paths[$id] = [
+                'id' => $id,
+                'type'=> $this->getRecordValue($data, 'type'),
+                'path' => $this->getRecordValue($data, 'path'),
+                'datetime' => $date
+            ];
         }
         
         $schedule->setFilesPath($paths);
@@ -332,11 +346,13 @@ class ScheduleController{
 
     public function loadPreferenceData($records){
 
-        while ($data = $records->fetch_assoc()){ 
-            $columnsPreference = new ColumnsPreference();
-            $columnsPreference->setId($data['id']);
-            $columnsPreference->setPreference($data['preference']);
-            $columnsPreference->setUserId($data['userId']);
+        $columnsPreference = new ColumnsPreference();
+
+        foreach ($this->getRecordsIterator($records) as $data){
+            $columnsPreference->setId($this->getRecordValue($data, 'id'));
+            $columnsPreference->setPreference($this->getRecordValue($data, 'preference'));
+            $columnsPreference->setUserId($this->getRecordValue($data, 'userId'));
+            break;
         }
 
         return $columnsPreference;
@@ -346,50 +362,46 @@ class ScheduleController{
 
         $schedules = array();
 
-        while ($data = $records->fetch_assoc()){ 
+        foreach ($this->getRecordsIterator($records) as $data){
+            $schedule = array();
 
+            $schedule['getId'] = $this->getRecordValue($data, 'id');
+            $schedule['getTransportadora'] = $this->getRecordValue($data, 'transportadora');
+            $schedule['getTipoVeiculo'] = $this->getRecordValue($data, 'tipoVeiculo');
+            $schedule['getPlacaCavalo'] = $this->getRecordValue($data, 'placa_cavalo');
+            $schedule['getOperacao'] = $this->getRecordValue($data, 'operacao');
+            $schedule['getNf'] = $this->getRecordValue($data, 'nf');
 
-            $schedule['getId'] = $data['id'];
-            $schedule['getTransportadora'] = $data['transportadora'];
-            $schedule['getTipoVeiculo'] = $data['tipoVeiculo'];
-            $schedule['getPlacaCavalo'] = $data['placa_cavalo'];
-            $schedule['getOperacao'] = $data['operacao'];
-            $schedule['getNf'] = $data['nf'];
-            $schedule['getHoraChegada'] = date("d/m/Y H:i:s", strtotime($data['horaChegada']));
-            if(empty($data['horaChegada'])) $schedule['getHoraChegada'] = '';
+            $schedule['getHoraChegada'] = $this->formatDateTime($this->getRecordValue($data, 'horaChegada'));
+            $schedule['getInicioOperacao'] = $this->formatDateTime($this->getRecordValue($data, 'inicio_operacao'));
+            $schedule['getFimOperacao'] = $this->formatDateTime($this->getRecordValue($data, 'fim_operacao'));
 
-            $schedule['getInicioOperacao'] = date("d/m/Y H:i:s", strtotime($data['inicio_operacao']));
-            if(empty($data['inicio_operacao'])) $schedule['getInicioOperacao'] = '';
+            $schedule['getNomeUsuario'] = $this->getRecordValue($data, 'usuario');
+            $schedule['getDataInclusao'] = $this->formatDateTime($this->getRecordValue($data, 'dataInclusao'));
+            $schedule['getPeso'] = $this->getRecordValue($data, 'peso');
+            $schedule['getDataAgendamento'] = $this->formatDateTime($this->getRecordValue($data, 'data_agendamento'));
 
-            $schedule['getFimOperacao'] = date("d/m/Y H:i:s", strtotime($data['fim_operacao']));
-            if(empty($data['fim_operacao'])) $schedule['getFimOperacao'] = '';
+            $schedule['getSaida'] = $this->formatDateTime($this->getRecordValue($data, 'saida'));
+            $schedule['getSeparacao'] = $this->getRecordValue($data, 'separacao');
+            $schedule['getShipmentId'] = $this->getRecordValue($data, 'shipment_id');
+            $schedule['getDoca'] = $this->getRecordValue($data, 'doca');
+            $schedule['getDo_s'] = $this->getRecordValue($data, 'do_s');
+            $schedule['getCidade'] = $this->getRecordValue($data, 'cidade');
+            $schedule['getCargaQtde'] = $this->getRecordValue($data, 'carga_qtde');
+            $schedule['getObservacao'] = $this->getRecordValue($data, 'observacao');
+            $schedule['getDadosGerais'] = $this->getRecordValue($data, 'dados_gerais');
+            $schedule['getCliente'] = $this->getRecordValue($data, 'cliente');
+            $schedule['getStatus'] = $this->getRecordValue($data, 'status');
+            $schedule['getNomeMotorista'] = $this->getRecordValue($data, 'nome_motorista'); 
+            $schedule['getPlacaCarreta2'] = $this->getRecordValue($data, 'placa_carreta2');
+            $schedule['getDocumentoMotorista'] = $this->getRecordValue($data, 'documento_motorista');
+            $schedule['getPlacaCarreta'] = $this->getRecordValue($data, 'placa_carreta');
+            $schedule['getOperationId'] = $this->getRecordValue($data, 'operation_type_id');
+            $schedule['getOperator'] = $this->getRecordValue($data, 'operator');
+            $schedule['getChecker'] = $this->getRecordValue($data, 'checker');
+            $schedule['getLastModifiedBy'] = $this->getRecordValue($data, 'last_modified_by');
+            $schedule['getLastModifiedDate'] = $this->formatDateTime($this->getRecordValue($data, 'last_modified_date'));
 
-            $schedule['getNomeUsuario'] = $data['usuario'];
-            $schedule['getDataInclusao'] = date("d/m/Y H:i:s", strtotime($data['dataInclusao']));
-            $schedule['getPeso'] = $data['peso'];
-            $schedule['getDataAgendamento'] = date("d/m/Y H:i:s", strtotime($data['data_agendamento']));
-            $schedule['getSaida'] = date("d/m/Y H:i:s", strtotime($data['saida']));
-            if(empty($data['saida'])) $schedule['getSaida'] = '';
-
-            $schedule['getSeparacao'] = $data['separacao'];
-            $schedule['getShipmentId'] = $data['shipment_id'];
-            $schedule['getDoca'] = $data['doca'];
-            $schedule['getDo_s'] = $data['do_s'];
-            $schedule['getCidade'] = $data['cidade'];
-            $schedule['getCargaQtde'] = $data['carga_qtde'];
-            $schedule['getObservacao'] = $data['observacao'];
-            $schedule['getDadosGerais'] = $data['dados_gerais'];
-            $schedule['getCliente'] = $data['cliente'];
-            $schedule['getStatus'] = $data['status'];
-            $schedule['getNomeMotorista'] = $data['nome_motorista']; 
-            $schedule['getPlacaCarreta2'] = $data['placa_carreta2'];
-            $schedule['getDocumentoMotorista'] = $data['documento_motorista'];
-            $schedule['getPlacaCarreta'] = $data['placa_carreta'];
-            $schedule['getOperationId'] = $data['operation_type_id'];
-            $schedule['getOperator'] = $data['operator'];
-            $schedule['getChecker'] = $data['checker'];
-            $schedule['getLastModifiedBy'] = $data['last_modified_by'];
-            $schedule['getLastModifiedDate'] = date("d/m/Y H:i:s", strtotime($data['last_modified_date']));       
             array_push($schedules, $schedule);
         }
 
@@ -400,56 +412,50 @@ class ScheduleController{
 
         $schedules = array();
 
-        while ($data = $records->fetch_assoc()){ 
+        foreach ($this->getRecordsIterator($records) as $data){
             $schedule = new Schedule();
-            $schedule->setId($data['id']);
-            $schedule->setTransportadora($data['transportadora']);
-            $schedule->setTipoVeiculo($data['tipoVeiculo']);
-            $schedule->setPlacaCavalo($data['placa_cavalo']);
-            $schedule->setOperacao($data['operacao']);
-            $schedule->setNf($data['nf']);
-            $schedule->setHoraChegada( date("d/m/Y H:i:s", strtotime($data['horaChegada'])));
-            if(empty($data['horaChegada'])) $schedule->setHoraChegada('');
+            $schedule->setId($this->getRecordValue($data, 'id'));
+            $schedule->setTransportadora($this->getRecordValue($data, 'transportadora'));
+            $schedule->setTipoVeiculo($this->getRecordValue($data, 'tipoVeiculo'));
+            $schedule->setPlacaCavalo($this->getRecordValue($data, 'placa_cavalo'));
+            $schedule->setOperacao($this->getRecordValue($data, 'operacao'));
+            $schedule->setNf($this->getRecordValue($data, 'nf'));
+            $schedule->setHoraChegada($this->formatDateTime($this->getRecordValue($data, 'horaChegada')));
 
-            $schedule->setInicioOperacao(date("d/m/Y H:i:s", strtotime($data['inicio_operacao'])));
-            if(empty($data['inicio_operacao'])) $schedule->setInicioOperacao('');
+            $schedule->setInicioOperacao($this->formatDateTime($this->getRecordValue($data, 'inicio_operacao')));
+            $schedule->setFimOperacao($this->formatDateTime($this->getRecordValue($data, 'fim_operacao')));
 
-            $schedule->setFimOperacao(date("d/m/Y H:i:s", strtotime($data['fim_operacao'])));
-            if(empty($data['fim_operacao'])) $schedule->setFimOperacao('');
+            $schedule->setNomeUsuario($this->getRecordValue($data, 'usuario'));
+            $schedule->setDataInclusao($this->formatDateTime($this->getRecordValue($data, 'dataInclusao')));
+            $schedule->setPeso($this->getRecordValue($data, 'peso'));
+            $schedule->setDataAgendamento($this->formatDateTime($this->getRecordValue($data, 'data_agendamento')));
+            $schedule->setSaida($this->formatDateTime($this->getRecordValue($data, 'saida')));
 
-            $schedule->setNomeUsuario($data['usuario']);
-            $schedule->setDataInclusao(date("d/m/Y H:i:s", strtotime($data['dataInclusao'])));
-            $schedule->setPeso($data['peso']);
-            $schedule->setDataAgendamento(date("d/m/Y H:i:s", strtotime($data['data_agendamento'])));
-            $schedule->setSaida(date("d/m/Y H:i:s", strtotime($data['saida'])));
-            if(empty($data['saida'])) $schedule->setSaida('');
+            $schedule->setSeparacao($this->getRecordValue($data, 'separacao'));
+            $schedule->setShipmentId($this->getRecordValue($data, 'shipment_id'));
+            $schedule->setDoca($this->getRecordValue($data, 'doca'));
+            $schedule->setDo_s($this->getRecordValue($data, 'do_s'));
+            $schedule->setCidade($this->getRecordValue($data, 'cidade'));
+            $schedule->setCargaQtde($this->getRecordValue($data, 'carga_qtde'));
+            $schedule->setObservacao($this->getRecordValue($data, 'observacao'));
+            $schedule->setDadosGerais($this->getRecordValue($data, 'dados_gerais'));
+            $schedule->setCliente($this->getRecordValue($data, 'cliente'));
+            $schedule->setStatus($this->getRecordValue($data, 'status'));
+            $schedule->setNomeMotorista($this->getRecordValue($data, 'nome_motorista')); 
+            $schedule->setPlacaCarreta2($this->getRecordValue($data, 'placa_carreta2'));
+            $schedule->setDocumentoMotorista($this->getRecordValue($data, 'documento_motorista'));
+            $schedule->setPlacaCarreta($this->getRecordValue($data, 'placa_carreta'));
+            $schedule->setOperationId($this->getRecordValue($data, 'operation_type_id'));
+            $schedule->setOperator($this->getRecordValue($data, 'operator'));
+            $schedule->setChecker($this->getRecordValue($data, 'checker'));
+            $schedule->setLastModifiedBy($this->getRecordValue($data, 'last_modified_by'));
+            $schedule->setLastModifiedDate($this->formatDateTime($this->getRecordValue($data, 'last_modified_date')));
 
-            $schedule->setSeparacao($data['separacao']);
-            $schedule->setShipmentId($data['shipment_id']);
-            $schedule->setDoca($data['doca']);
-            $schedule->setDo_s($data['do_s']);
-            $schedule->setCidade($data['cidade']);
-            $schedule->setCargaQtde($data['carga_qtde']);
-            $schedule->setObservacao($data['observacao']);
-            $schedule->setDadosGerais($data['dados_gerais']);
-            $schedule->setCliente($data['cliente']);
-            $schedule->setStatus($data['status']);
-            $schedule->setNomeMotorista($data['nome_motorista']); 
-            $schedule->setPlacaCarreta2($data['placa_carreta2']);
-            $schedule->setDocumentoMotorista($data['documento_motorista']);
-            $schedule->setPlacaCarreta($data['placa_carreta']);
-            $schedule->setOperationId($data['operation_type_id']);
-            $schedule->setOperator($data['operator']);
-            $schedule->setChecker($data['checker']);
-            $schedule->setLastModifiedBy($data['last_modified_by']);
-            $schedule->setLastModifiedDate(date("d/m/Y H:i:s", strtotime($data['last_modified_date'])));
-
-            $schedule->setAttPickingStatus($data['attatchment_picking_status']);
-
-            $schedule->setAttInvoiceStatus($data['attatchment_invoice_status']);
-            $schedule->setAttCertificateStatus($data['attatchment_certificate_status']);
-            $schedule->setAttBoardingStatus($data['attatchment_boarding_status']);
-            $schedule->setAttOtherStatus($data['attatchment_other_status']);
+            $schedule->setAttPickingStatus($this->getRecordValue($data, 'attatchment_picking_status'));
+            $schedule->setAttInvoiceStatus($this->getRecordValue($data, 'attatchment_invoice_status'));
+            $schedule->setAttCertificateStatus($this->getRecordValue($data, 'attatchment_certificate_status'));
+            $schedule->setAttBoardingStatus($this->getRecordValue($data, 'attatchment_boarding_status'));
+            $schedule->setAttOtherStatus($this->getRecordValue($data, 'attatchment_other_status'));
     
             array_push($schedules, $schedule);
         }
@@ -462,11 +468,79 @@ class ScheduleController{
         $result = $this->scheduleRepository->getLastError();
         $id = '';
 
-        while ($data = $result->fetch_assoc()){ 
-           $id = $data['id'];
+        foreach ($this->getRecordsIterator($result) as $data){
+            $id = $this->getRecordValue($data, 'id');
         }
 
         return $id;
+    }
+
+    private function getRecordsIterator($records){
+        if ($records instanceof mysqli_result) {
+            while ($row = $records->fetch_assoc()) {
+                yield $row;
+            }
+            return;
+        }
+
+        if (is_array($records)) {
+            foreach ($records as $row) {
+                yield $row;
+            }
+            return;
+        }
+
+        if ($records instanceof Traversable) {
+            foreach ($records as $row) {
+                yield $row;
+            }
+            return;
+        }
+    }
+
+    private function getRecordValue($record, $field){
+        if (is_array($record) && array_key_exists($field, $record)) {
+            return $record[$field];
+        }
+
+        if (is_object($record) && isset($record->$field)) {
+            return $record->$field;
+        }
+
+        return null;
+    }
+
+    private function formatDateTime($value){
+        if ($value === null || $value === '') {
+            return '';
+        }
+
+        $timestamp = strtotime($value);
+        if ($timestamp === false) {
+            return '';
+        }
+
+        return date('d/m/Y H:i:s', $timestamp);
+    }
+
+    private function countRecords($records){
+        if (is_array($records)) {
+            return count($records);
+        }
+
+        if ($records instanceof Traversable) {
+            $count = 0;
+            foreach ($records as $_) {
+                $count++;
+            }
+            return $count;
+        }
+
+        if ($records instanceof mysqli_result) {
+            return $records->num_rows;
+        }
+
+        return 0;
     }
 }
 

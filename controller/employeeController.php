@@ -33,12 +33,7 @@ class EmployeeController{
 
             $result = $this->employeeRepository->findByNameAndPosition($name, $position);
 
-            if($result->num_rows > 0){
-                echo 'erro ao buscar duplicado';
-                return 'SAVE_ERROR';
-            }
-
-            $count = $result->fetch_assoc() == null ? 0 : count((array)$result->fetch_assoc());
+            $count = $this->countRecords($result);
 
             if($count > 0) {
                 return 'ALREADY_EXISTS';
@@ -73,6 +68,23 @@ class EmployeeController{
 
         if($records == null) return $employees;
 
+        if (is_array($records) || $records instanceof Traversable) {
+            foreach ($records as $data) {
+                $employee = new Employee();
+                $employee->setId($this->getRecordValue($data, 'id'));
+                $employee->setName($this->getRecordValue($data, 'name'));
+                $employee->setPosition($this->getRecordValue($data, 'position'));
+                $employee->setCreatedDate($this->getRecordValue($data, 'created_date'));
+                $employee->setCreatedBy($this->getRecordValue($data, 'user_name'));
+                $employee->setLastModifiedDate($this->getRecordValue($data, 'last_modified_date'));
+                $employee->setLastModifiedBy($this->getRecordValue($data, 'last_user_name'));
+                
+                array_push($employees, $employee);
+            }
+
+            return $employees;
+        }
+
         while ($data = $records->fetch_assoc()){ 
             $employee = new Employee();
             $employee->setId($data['id']);
@@ -87,6 +99,38 @@ class EmployeeController{
         }
 
         return $employees;
+    }
+
+    private function countRecords($records){
+        if (is_array($records)) {
+            return count($records);
+        }
+
+        if ($records instanceof Traversable) {
+            $count = 0;
+            foreach ($records as $_) {
+                $count++;
+            }
+            return $count;
+        }
+
+        if ($records instanceof mysqli_result) {
+            return $records->num_rows;
+        }
+
+        return 0;
+    }
+
+    private function getRecordValue($record, $field){
+        if (is_array($record) && array_key_exists($field, $record)) {
+            return $record[$field];
+        }
+
+        if (is_object($record) && isset($record->$field)) {
+            return $record->$field;
+        }
+
+        return null;
     }
 }
 ?>

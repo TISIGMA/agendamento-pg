@@ -32,7 +32,7 @@ class TruckTypeController{
 
             $result = $this->truckTypeRepository->findByDescription($description);
 
-            $count = $result->fetch_assoc() == null ? 0 : count((array)$result->fetch_assoc());
+            $count = $this->countRecords($result);
 
             if($count > 0) {
                 return 'ALREADY_EXISTS';
@@ -67,6 +67,18 @@ class TruckTypeController{
 
         if($records == null) return $truckTypes;
 
+        if (is_array($records) || $records instanceof Traversable) {
+            foreach ($records as $data) {
+                $truckType = new TruckType();
+                $truckType->setId($this->getRecordValue($data, 'id'));
+                $truckType->setDescription($this->getRecordValue($data, 'descricao'));
+                
+                array_push($truckTypes, $truckType);
+            }
+
+            return $truckTypes;
+        }
+
         while ($data = $records->fetch_assoc()){ 
             $truckType = new TruckType();
             $truckType->setId($data['id']);
@@ -76,6 +88,38 @@ class TruckTypeController{
         }
 
         return $truckTypes;
+    }
+
+    private function countRecords($records){
+        if (is_array($records)) {
+            return count($records);
+        }
+
+        if ($records instanceof Traversable) {
+            $count = 0;
+            foreach ($records as $_) {
+                $count++;
+            }
+            return $count;
+        }
+
+        if ($records instanceof mysqli_result) {
+            return $records->num_rows;
+        }
+
+        return 0;
+    }
+
+    private function getRecordValue($record, $field){
+        if (is_array($record) && array_key_exists($field, $record)) {
+            return $record[$field];
+        }
+
+        if (is_object($record) && isset($record->$field)) {
+            return $record->$field;
+        }
+
+        return null;
     }
 }
 ?>

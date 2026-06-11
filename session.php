@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 define('ROOT_PATH', dirname(__FILE__));
 
 $GLOBAL_MONTHS = ['01'=>'JANEIRO', '02'=>'FEVEREIRO', '03'=>'MARÇO', '04'=>'ABRIL', '05'=>'MAIO', '06'=>'JUNHO', '07'=>'JULHO', '08'=>'AGOSTO', '09'=>'SETEMBRO', '10'=>'OUTUBRO', '11'=>'NOVEMBRO', '12'=>'DEZEMBRO'];
@@ -39,7 +41,7 @@ if(isset($_GET['conteudo']) && $_GET['conteudo'] != null){
     $contentPost = $_GET['conteudo'];
 }
 
-if( $_SERVER['REQUEST_METHOD'] =='POST' && !in_array($contentPost, $pagesNotClearPost)){
+if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] =='POST' && !in_array($contentPost, $pagesNotClearPost)){
     
     $request = md5(implode( $_POST ) );
 
@@ -56,22 +58,22 @@ if( $_SERVER['REQUEST_METHOD'] =='POST' && !in_array($contentPost, $pagesNotClea
 function checkNotification($mysqli){
 
     try {
-        if ($stmt = $mysqli->prepare("SELECT message, duration, created_date FROM notification LIMIT 1")){  
-        
-            $stmt->execute();
-            $stmt->store_result();
-    
-            $stmt->bind_result($message, $duration, $created_date);
-            $stmt->fetch();
-    
-            if ($stmt->num_rows == 1){ 
-                
-                $_SESSION['message'] = $message;
-                $_SESSION['duration'] = $duration;
-                $_SESSION['created_date'] = $created_date;
-                $_SESSION['message_readed'] = false;            
-            }
+        if (!session_can_use_eloquent()) {
+            return;
         }
+
+        $row = Capsule::table('notification')
+            ->select(['message', 'duration', 'created_date'])
+            ->limit(1)
+            ->first();
+
+        if ($row != null) {
+            $_SESSION['message'] = $row->message;
+            $_SESSION['duration'] = $row->duration;
+            $_SESSION['created_date'] = $row->created_date;
+            $_SESSION['message_readed'] = false;
+        }
+
         return;
     } catch (Exception $ex) {
         return;
@@ -80,37 +82,43 @@ function checkNotification($mysqli){
 }
 
 
-function login($usuario, $senha, $mysqli) {
+function login($usuario, $senha, $mysqli = null) {
 
     $data = date('d/m/Y');
     $hora = date('h:i');
 
-    if ($stmt = $mysqli->prepare("SELECT id,nome, username, password, dataInclusao, tipo FROM usuario  WHERE username = ? LIMIT 1")){  
-        
-        $stmt->bind_param('s', $usuario);
-        $stmt->execute();
-        $stmt->store_result();
+    try {
+        if (!session_can_use_eloquent()) {
+            return false;
+        }
 
-        $stmt->bind_result($id, $nome, $username,$password, $data_inclusao, $tipo);
-        $stmt->fetch();
+        $user = Capsule::table('usuario')
+            ->select(['id', 'nome', 'username', 'password', 'dataInclusao', 'tipo'])
+            ->where('username', $usuario)
+            ->limit(1)
+            ->first();
 
-        if ($stmt->num_rows == 1){ 
+        if ($user == null) {
+            return false;
+        }
 
-            if ($senha == $password){ 
-                $_SESSION['id'] = $id;
-                $_SESSION['nome'] = $nome;
-                $_SESSION['username'] = $username;
-                $_SESSION['tipo'] = $tipo;
-                getAccess($mysqli);
-                return true;
+        if ($senha == $user->password) {
+            $_SESSION['id'] = $user->id;
+            $_SESSION['nome'] = $user->nome;
+            $_SESSION['username'] = $user->username;
+            $_SESSION['tipo'] = $user->tipo;
+            getAccess($mysqli);
+            return true;
+        }
 
-            } else return false;
-            
-        } else return false;
+        return false;
+    } catch (Throwable $ex) {
+        error_log('ORM login error: ' . $ex->getMessage());
+        return false;
     }
 }
 
-function getAccess($mysqli){
+function getAccess($mysqli = null){
 
     $FUNCTION_ACCESS = [
         'schedule'=> 'hidden',
@@ -127,44 +135,67 @@ function getAccess($mysqli){
         'tracking' => 'hidden'
     ];
 
-    $sql = "SELECT id, userType, functionName
-            FROM user_access 
-            WHERE userType = '".$_SESSION['tipo'] ."'";
+    $userType = isset($_SESSION['tipo']) ? $_SESSION['tipo'] : '';
 
-                    
-    $result = $mysqli->query($sql);
+    try {
+        if (!session_can_use_eloquent()) {
+            $_SESSION['FUNCTION_ACCESS'] = $FUNCTION_ACCESS;
+            return;
+        }
 
-    while ($data = $result->fetch_assoc()){ 
-        $FUNCTION_ACCESS[$data['functionName']] = '';
+        $rows = Capsule::table('user_access')
+            ->select(['id', 'userType', 'functionName'])
+            ->where('userType', $userType)
+            ->get();
 
+        foreach ($rows as $row) {
+            $functionName = $row->functionName;
+            if (array_key_exists($functionName, $FUNCTION_ACCESS)) {
+                $FUNCTION_ACCESS[$functionName] = '';
+            }
+        }
+
+        $_SESSION['FUNCTION_ACCESS'] = $FUNCTION_ACCESS;
+    } catch (Throwable $ex) {
+        error_log('ORM access error: ' . $ex->getMessage());
+        $_SESSION['FUNCTION_ACCESS'] = $FUNCTION_ACCESS;
     }
-
-    $_SESSION['FUNCTION_ACCESS'] = $FUNCTION_ACCESS;
 }
 
-function login_check($mysqli) {
+function login_check($mysqli = null) {
 
     if (isset($_SESSION['username'])){
         $username = $_SESSION['username'];
-        if ($stmt = $mysqli->prepare("SELECT id,nome, username, password, dataInclusao, tipo FROM usuario  WHERE username = ? LIMIT 1")){
-            $stmt->bind_param('i', $id);
-            $stmt->execute();  
-            $stmt->store_result();
 
-            if($stmt->num_rows == 1) {
-                if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 7200)) {
-                    session_unset();     
-                    session_destroy();  
-                    return false;
-                }
-                else{
-                    $_SESSION['LAST_ACTIVITY'] = time();
-                    return true;
-                }
-            }else return false;
-        } 
+        try {
+            if (!session_can_use_eloquent()) {
+                return false;
+            }
 
-        else return false;
+            $exists = Capsule::table('usuario')
+                ->where('username', $username)
+                ->exists();
+
+            if (!$exists) {
+                return false;
+            }
+
+            if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 7200)) {
+                session_unset();     
+                session_destroy();  
+                return false;
+            }
+
+            $_SESSION['LAST_ACTIVITY'] = time();
+            return true;
+        } catch (Throwable $ex) {
+            error_log('ORM login_check error: ' . $ex->getMessage());
+            return false;
+        }
         
     } else  return false;
+}
+
+function session_can_use_eloquent(){
+    return class_exists(Capsule::class);
 }

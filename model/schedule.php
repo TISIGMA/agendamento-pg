@@ -40,6 +40,9 @@ class Schedule{
     private $lastModifiedBy;
     private $lastModifiedDate;
     private $attPickingStatus;
+    private $attInvoiceStatus;
+    private $attCertificateStatus;
+    private $attBoardingStatus;
     private $attOtherStatus;
 
 

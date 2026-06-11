@@ -5,6 +5,8 @@ include_once 'session.php';
 
 date_default_timezone_set("America/Sao_Paulo");
 
+$loginError = isset($_GET['erro']) && $_GET['erro'] === 'login';
+
 if (isset($_SESSION['username'])) {
     echo "<script>window.location='home.php'</script>";
 }
@@ -50,6 +52,9 @@ if (isset($_SESSION['username'])) {
             <div class="login-box">
                 <div class="login-box-info">
                     <h3>Informe seu usuário e senha.</h3>
+                    <?php if ($loginError) { ?>
+                        <div class="alert alert-danger" role="alert">Usuario ou senha incorretos.</div>
+                    <?php } ?>
                 </div>
                 <div class="login-form">
                     <form role="form" action="check-login.php" method="post" class="login-form">
@@ -72,8 +77,8 @@ if (isset($_SESSION['username'])) {
         </div>
         <script src="assets/js/jquery-1.11.1.min.js"></script>
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="assets/js/jquery.backstretch.min.js"></script>
         <script src="assets/js/scripts.js"></script>
-        <script src="/path/to/cdn/jquery.min.js"></script>
         <script src="jquery.datetimepicker.js"></script>
     </body>
 </html>

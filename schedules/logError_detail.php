@@ -4,25 +4,32 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 try{
-    $sql = "SELECT logError.id as logId, dateError, usuario.nome as username, description 
-            FROM logError
-            INNER JOIN usuario ON usuario.id = userId
-            ORDER BY logError.id DESC LIMIT 400";  
-
-    $result = $MySQLi->query($sql);
-
     $logs = array();
     $row = array();
 
-    while ($data = $result->fetch_assoc()){ 
+    $result = Capsule::table('logError')
+        ->select([
+            'logError.id as logId',
+            'dateError',
+            'usuario.nome as username',
+            'description',
+        ])
+        ->join('usuario', 'usuario.id', '=', 'userId')
+        ->orderBy('logError.id', 'desc')
+        ->limit(400)
+        ->get();
+
+    foreach ($result as $data) {
         $row = array();
-        $row['id'] = $data['logId'];
-        $row['date'] = $data['dateError'];
-        $row['user'] = $data['username'];
-        $row['detail'] = $data['description'];
+        $row['id'] = $data->logId;
+        $row['date'] = $data->dateError;
+        $row['user'] = $data->username;
+        $row['detail'] = $data->description;
         array_push($logs, $row);
-     }
+    }
 
 
 }catch(Exception $e){
@@ -84,4 +91,3 @@ try{
         </div>
     </div>
 </div>
-

@@ -62,6 +62,27 @@ class ShippingCompanyController{
 
         $shippingCompanys = array();
 
+        if (is_array($records) || $records instanceof Traversable) {
+            foreach ($records as $data) {
+                $shippingCompany = new ShippingCompany();
+                $shippingCompany->setId($this->getRecordValue($data, 'id'));
+                $shippingCompany->setNome($this->getRecordValue($data, 'nome'));
+                $shippingCompany->setUsername($this->getRecordValue($data, 'username'));
+                $shippingCompany->setCNPJ($this->getRecordValue($data, 'cnpj'));
+                $shippingCompany->setEmail($this->getRecordValue($data, 'email'));
+                $shippingCompany->setTelefone($this->getRecordValue($data, 'telefone'));
+                $shippingCompany->setCelular($this->getRecordValue($data, 'celular'));
+                $shippingCompany->setPassword($this->getRecordValue($data, 'password'));
+                $shippingCompany->setData($this->getRecordValue($data, 'data'));
+                $shippingCompany->setUsuario($this->getRecordValue($data, 'usuario'));
+                $shippingCompany->setClienteOrigem($this->getRecordValue($data, 'cliente_origem'));
+                
+                array_push($shippingCompanys, $shippingCompany);
+            }
+
+            return $shippingCompanys;
+        }
+
         while ($data = $records->fetch_assoc()){ 
             $shippingCompany = new ShippingCompany();
             $shippingCompany->setId($data['id']);
@@ -80,6 +101,18 @@ class ShippingCompanyController{
         }
 
         return $shippingCompanys;
+    }
+
+    private function getRecordValue($record, $field){
+        if (is_array($record) && array_key_exists($field, $record)) {
+            return $record[$field];
+        }
+
+        if (is_object($record) && isset($record->$field)) {
+            return $record->$field;
+        }
+
+        return null;
     }
 }
 

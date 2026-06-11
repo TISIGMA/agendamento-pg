@@ -88,6 +88,10 @@ if($preference->getId() != null){
     $columns = $scheduleController->sortArray(json_decode($preference->getPreference(), true, JSON_UNESCAPED_UNICODE));
 }
 
+// #region debug-point C:search-filters
+$__dbg=@parse_ini_file(__DIR__ . '/../.dbg/schedule-empty-data.env'); @file_get_contents(($__dbg['DEBUG_SERVER_URL'] ?? 'http://127.0.0.1:7777/event'), false, stream_context_create(['http'=>['method'=>'POST','header'=>"Content-Type: application/json\r\n",'content'=>json_encode(['sessionId'=>($__dbg['DEBUG_SESSION_ID'] ?? 'schedule-empty-data'),'runId'=>'pre-fix','hypothesisId'=>'C','location'=>'schedules/searchSchedule.php','msg'=>'[DEBUG] search filters before query','data'=>['session_customer'=>(isset($_SESSION['customerName']) ? $_SESSION['customerName'] : null),'status'=>$status,'startDate'=>$startDate,'endDate'=>$endDate,'session_tipo'=>(isset($_SESSION['tipo']) ? $_SESSION['tipo'] : null),'session_user_id'=>(isset($_SESSION['id']) ? $_SESSION['id'] : null)],'ts'=>round(microtime(true)*1000)])]]));
+// #endregion
+
 $schedules = $scheduleController->findByClientStatusStartDateAndEndDate($_SESSION['customerName'], $status, $startDate, $endDate);
 
 ?>

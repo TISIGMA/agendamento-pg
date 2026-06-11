@@ -1,5 +1,43 @@
 <?php
 
+    use Illuminate\Database\Capsule\Manager as Capsule;
+
+    function evonik_records_iter($records){
+      if ($records instanceof mysqli_result) {
+        while ($row = $records->fetch_assoc()) {
+          yield $row;
+        }
+        return;
+      }
+
+      if (is_array($records)) {
+        foreach ($records as $row) {
+          if (is_object($row)) $row = (array) $row;
+          yield $row;
+        }
+        return;
+      }
+
+      if ($records instanceof Traversable) {
+        foreach ($records as $row) {
+          if (is_object($row)) $row = (array) $row;
+          yield $row;
+        }
+        return;
+      }
+    }
+
+    function evonik_records_count($records){
+      if ($records instanceof mysqli_result) return $records->num_rows;
+      if (is_array($records)) return count($records);
+      if ($records instanceof Traversable) {
+        $count = 0;
+        foreach ($records as $row) { $count++; }
+        return $count;
+      }
+      return 0;
+    }
+
     function messageSuccess($msg){
         return '<div class="alert alert-success alert-dismissible">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -23,7 +61,7 @@
       $horarioArray = array();
       
       $count = 0;
-      while ($dados = $horarios->fetch_assoc()){ 
+      foreach (evonik_records_iter($horarios) as $dados){ 
           $horario = new Horario();
           $horario->setId($dados['id']);
           $horario->setHorario($dados['descricao']);
@@ -38,7 +76,7 @@
     function buscarHorario($id, $mysql){
       $horario = new Horario();
       $horarios = $horario->buscarHorario($id, $mysql);
-      while ($dados = $horarios->fetch_assoc()){ 
+      foreach (evonik_records_iter($horarios) as $dados){ 
           $horario = new Horario();
           $horario->setId($dados['id']);
           $horario->setHorario($dados['descricao']);
@@ -61,7 +99,7 @@
       $transp = array();
       
       $count = 0;
-      while ($dados = $transportadoras->fetch_assoc()){ 
+      foreach (evonik_records_iter($transportadoras) as $dados){ 
           $transportadora = new Transportadora();
           $transportadora->setId($dados['id']);
           $transportadora->setNome($dados['nome']);
@@ -81,7 +119,7 @@
     function buscarTransportadoraPorNome($transportadora, $mysql,$nome){
       $transportes = $transportadora->listarTransportadoraPorNome($mysql, $nome);
 
-      while ($dados = $transportes->fetch_assoc()){ 
+      foreach (evonik_records_iter($transportes) as $dados){ 
           $transporte = new Transportadora();
           $transporte->setId($dados['id']);
           $transporte->setNome($dados['nome']);
@@ -102,7 +140,7 @@
       $horarios = $horario->buscarHorarios($usuario, $armazem, $data, $mysql);
       
       $count = 0;
-      while ($dados = $horarios->fetch_assoc()){ 
+      foreach (evonik_records_iter($horarios) as $dados){ 
           $horario = new Horario();
           $horario->setId($dados['id']);
           $horario->setHorario($dados['descricao']);
@@ -121,16 +159,25 @@
     }
 
     function buscarTipoVeiculo($mysql){
-      $sql = "select id,descricao from tipoVeiculo order by descricao ";
-      $result = $mysql->query($sql);
-      return $result;
+      if (!class_exists(Capsule::class)) {
+        return [];
+      }
+
+      return Capsule::table('tipoVeiculo')
+        ->select(['id','descricao'])
+        ->orderBy('descricao')
+        ->get()
+        ->map(function($row){ return (array) $row; })
+        ->toArray();
     }
 
     function ultimoIdJanela($mysql){
       $janela = new Janela();
       $resultado = $janela->ultimoIdJanela($mysql);
-      while ($dados = $resultado->fetch_assoc()){ 
+      $id = null;
+      foreach (evonik_records_iter($resultado) as $dados){ 
         $id = $dados['id'];
+        break;
       }
       return $id;
     }
@@ -143,7 +190,7 @@
       $arrayJanelas = array();
       
       $count = 0;
-      while ($dados = $janelas->fetch_assoc()){ 
+      foreach (evonik_records_iter($janelas) as $dados){ 
           $janela = new Janela();
           $janela->setId($dados['id']);
           $janela->setIdhorario($dados['id_horario']);
@@ -174,12 +221,12 @@
     function listarJanelasCount($mysql, $data, $status, $armazem){
       $janela = new Janela();
       $result = $janela->listarJanelasCount($mysql, $data, $status, $armazem);
-      return $result->num_rows; 
+      return evonik_records_count($result); 
     }
     function listarJanelasOcupadas($mysql, $data, $armazem){
       $janela = new Janela();
       $result = $janela->listarJanelasOcupadas($mysql, $data, $armazem);
-      return $result->num_rows;
+      return evonik_records_count($result);
     }
 
     function listarJanelasPorData($mysql, $data, $status, $armazem){
@@ -187,7 +234,7 @@
       $result = $janela->listarJanelasCount($mysql, $data, $status, $armazem);
       $janelasArray = array();
       $count = 0;
-      while ($dados = $result->fetch_assoc()){ 
+      foreach (evonik_records_iter($result) as $dados){ 
           $horario = new Horario();
           $horario->setId($dados['id']);
           $horario->setHorario($dados['descricao']);
@@ -232,7 +279,7 @@
       $janela = new Janela();
       $result = $janela->buscarJanelaPorId($mysql, $id);
 
-      while ($dados = $result->fetch_assoc()){ 
+      foreach (evonik_records_iter($result) as $dados){ 
         $janela = new Janela();
         $janela->setId($dados['id']);
         $janela->setIdhorario($dados['id_horario']);
@@ -280,7 +327,7 @@
       $logAgendamento = new LogAgendamento();
       $result = $logAgendamento->listarLogJanela($mysql);
       $count = 0;
-      while ($dados = $result->fetch_assoc()){ 
+      foreach (evonik_records_iter($result) as $dados){ 
         $janela = new Janela();
         $janela->setId($dados['id']);
         $janela->setIdhorario($dados['id_horario']);
@@ -316,13 +363,14 @@
     function loop_JanelasOcupadas($result, $mysql){
       $arrayJanelas = array();
       $count = 0;
-      while ($dados = $result->fetch_assoc()){ 
+      foreach (evonik_records_iter($result) as $dados){ 
         $janela = new Janela();
         $janela->setId($dados['id']);
         $horario = new Horario();
         $horarioId = $horario->buscarHorario($dados['id_horario'], $mysql);
-        while ($dadosHor = $horarioId->fetch_assoc()){
+        foreach (evonik_records_iter($horarioId) as $dadosHor){
           $janela->setIdhorario($dadosHor['descricao']);
+          break;
         }
         $janela->setData($dados['data']);
         $janela->setTransportadora($dados['transportadora']);

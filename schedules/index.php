@@ -29,6 +29,10 @@ if(isset($_GET['customer']) && $_GET['customer'] != null) {
     $customerName = $customers[0]->getName();
 }
 
+// #region debug-point A:customer-session
+$__dbg=@parse_ini_file(__DIR__ . '/../.dbg/schedule-empty-data.env'); @file_get_contents(($__dbg['DEBUG_SERVER_URL'] ?? 'http://127.0.0.1:7777/event'), false, stream_context_create(['http'=>['method'=>'POST','header'=>"Content-Type: application/json\r\n",'content'=>json_encode(['sessionId'=>($__dbg['DEBUG_SESSION_ID'] ?? 'schedule-empty-data'),'runId'=>'pre-fix','hypothesisId'=>'A','location'=>'schedules/index.php','msg'=>'[DEBUG] customer session state','data'=>['get_customer'=>(isset($_GET['customer']) ? $_GET['customer'] : null),'session_customer'=>(isset($_SESSION['customerName']) ? $_SESSION['customerName'] : null),'session_customer_description'=>(isset($_SESSION['customerDescription']) ? $_SESSION['customerDescription'] : null),'session_user_id'=>(isset($_SESSION['id']) ? $_SESSION['id'] : null)],'ts'=>round(microtime(true)*1000)])]]));
+// #endregion
+
 $tipoUsuario = 3;
 if($_SESSION['tipo'] == 'user'){
    $tipoUsuario = 1; 
@@ -107,8 +111,8 @@ if(isset($_GET['conteudo'])) {
     <script src="../dist/js/sb-admin-2.js"></script> 
     <script src="../assets/js/jquery-1.11.1.min.js"></script>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../assets/js/jquery.backstretch.min.js"></script>
     <script src="../assets/js/scripts.js"></script>
-    <script src="../path/to/cdn/jquery.min.js"></script>
     <script src="../jquery.datetimepicker.js"></script>
     <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
     <script src="../vendor/jquery/jquery.min.js"></script>

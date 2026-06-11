@@ -1,14 +1,15 @@
 <?php
-require('klabin-agendamentos/pages/class.php');
-require('klabin-agendamentos/functions.php');
+require('evonik-agendamentos/pages/class.php');
+require('evonik-agendamentos/functions.php');
 
 $usuario = new Usuario();
 $result = $usuario->buscarUsuario($_SESSION['id'], $MySQLi);
-while ($dados = $result->fetch_assoc()){ 
-    $usuario->setId($dados['id']);
+foreach(evonik_records_iter($result) as $dados){ 
+    $usuario->setId($dados['user_id']);
     $usuario->setNome($dados['nome']);
     $usuario->setPassword($dados['password']);
     $usuario->setTipo($dados['tipo']);
+    break;
 }
 if(isset($_POST['senha']) && $_POST['senha'] != null){
     $usuario->setId($_POST['id']);

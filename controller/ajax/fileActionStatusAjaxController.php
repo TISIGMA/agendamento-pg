@@ -38,9 +38,5 @@ switch ($actionType) {
 
 $result = $repository->updateAttAction($scheduleId, $field, $actionValue); 
 
-if($result->hasError){
-    echo false;
-}else{
-    echo true;
-}
+echo ($result == false) ? false : true;
 ?>

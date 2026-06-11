@@ -3,21 +3,54 @@
 require_once('../conn.php');
 require_once('../session.php');
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 if(isset($_GET['id']) && $_GET['id'] != null){
 
     $id = $_GET['id'];
 
-    
-    $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta
-            FROM janela
-            WHERE id = '".$id."'";  
-
-    $result = $MySQLi->query($sql);
-
     $schedule = array();
 
-    while ($data = $result->fetch_assoc()){ 
+    $data = null;
+    $row = Capsule::table('janela')
+        ->select([
+            'id',
+            'data_agendamento',
+            'transportadora',
+            'status',
+            'tipoVeiculo',
+            'placa_cavalo',
+            'operacao',
+            'nf',
+            'horaChegada',
+            'inicio_operacao',
+            'fim_operacao',
+            'usuario',
+            'dataInclusao',
+            'peso',
+            'saida',
+            'separacao',
+            'shipment_id',
+            'do_s',
+            'cidade',
+            'carga_qtde',
+            'observacao',
+            'dados_gerais',
+            'cliente',
+            'doca',
+            'nome_motorista',
+            'placa_carreta2',
+            'documento_motorista',
+            'placa_carreta',
+        ])
+        ->where('id', (int) $id)
+        ->first();
 
+    if ($row != null) {
+        $data = (array) $row;
+    }
+
+    if ($data != null) {
 
         $schedule['getId'] = $data['id'];
         $schedule['getTransportadora'] = $data['transportadora'];
@@ -216,4 +249,3 @@ if(isset($_GET['id']) && $_GET['id'] != null){
         };
     }
 </script>
-
