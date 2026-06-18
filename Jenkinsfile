@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        IMAGE     = "agendamento-app"
-        APP_DIR   = "/opt/agendamento-pg"
-        STACK     = "agendamento"
+        IMAGE   = "agendamento-app"
+        APP_DIR = "/opt/agendamento-pg"
+        STACK   = "agendamento-pg"
     }
     stages {
         stage('Checkout') {
@@ -16,9 +16,13 @@ pipeline {
                 sh '''
                     find . -name "*.php" \
                         ! -path "./app_vendor/*" \
-                        ! -path "./.composer-home/*" \
-                    | xargs -P4 -I{} docker run --rm -v $(pwd):/app php:8.2-cli php -l /app/{} \
-                    | grep -v "No syntax errors" || true
+                        ! -path "./vendor/*" \
+                    | while read f; do
+                        docker run --rm \
+                            -v "${WORKSPACE}:/app" \
+                            php:8.2-cli \
+                            php -l "/app/$f"
+                    done || true
                 '''
             }
         }
@@ -26,10 +30,10 @@ pipeline {
             steps {
                 sh """
                     docker build \
-                        -f Dockerfile \
+                        -f ${APP_DIR}/Dockerfile \
                         -t ${IMAGE}:${BUILD_NUMBER} \
                         -t ${IMAGE}:latest \
-                        .
+                        ${APP_DIR}
                 """
             }
         }
@@ -37,9 +41,8 @@ pipeline {
             when { branch 'main' }
             steps {
                 sh """
-                    cd ${APP_DIR}
                     docker stack deploy \
-                        --compose-file docker-compose.yml \
+                        --compose-file ${APP_DIR}/docker-compose.yml \
                         --with-registry-auth \
                         --prune \
                         ${STACK}
