@@ -467,6 +467,20 @@ $statusFieldColor = ($schedule->getStatus() == 'Liberado') ? 'success-text-field
                                 <label>Observação</label>
                                 <textarea class="form-control" type="text"  name="observation" maxlength="149" <?=$readonly ?> <?=$fieldAcces['observation'] ?> id="observation" required><?=$schedule->getObservacao() ?></textarea>
                             </div>
+                            <div class="form-group">
+                                <label>Scaneado</label>
+                                <select name="scaneado" class="form-control" <?=$readonly ?> id="scaneado">
+                                    <option value="Não" <?=$schedule->getScaneado() == 'Não' ? 'selected' : '' ?>>Não</option>
+                                    <option value="Sim" <?=$schedule->getScaneado() == 'Sim' ? 'selected' : '' ?>>Sim</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Carga em Qualidade</label>
+                                <select name="carga_em_qualidade" class="form-control" <?=$readonly ?> id="carga_em_qualidade">
+                                    <option value="Não" <?=$schedule->getCargaEmQualidade() == 'Não' ? 'selected' : '' ?>>Não</option>
+                                    <option value="Sim" <?=$schedule->getCargaEmQualidade() == 'Sim' ? 'selected' : '' ?>>Sim</option>
+                                </select>
+                            </div>
                         </div> 
                     </div>
                     <div class="row" <?=$sectionAccess ?>>

@@ -6,7 +6,7 @@ require_once('../controller/customerController.php');
 require_once('../utils.php');
 
 //controla versão de arquivos css e javascript para forçar o carregamento da versão atualizada
-define('Version', '8');
+define('Version', '11');
 
 if($_SESSION['nome'] == null){
 	header('LOCATION:../index.php');
@@ -93,31 +93,32 @@ if(isset($_GET['conteudo'])) {
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- JS scripts -->
-    <script src="../vendor/raphael/raphael.min.js"></script>
-    <script src="../vendor/morrisjs/morris.min.js"></script>
-    <script src="../data/morris-data.js"></script>
+    <!-- JS scripts (ordem correta) -->
+    <!-- jQuery (primeiro) -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    
+    <!-- Moment.js e datetimepicker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    
+    <!-- Demais libs -->
     <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="../vendor/metisMenu/metisMenu.min.js"></script>
     <script src="https://igorescobar.github.io/jQuery-Mask-Plugin/js/jquery.mask.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="../utils.js?<?php echo Version; ?>"></script>  
-    <script src="/jQuery-Mask-Plugin-master/"></script>
-    <script src="../dist/js/sb-admin-2.js"></script> 
-    <script src="../assets/js/jquery-1.11.1.min.js"></script>
-    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../assets/js/jquery.backstretch.min.js"></script>
-    <script src="../assets/js/scripts.js"></script>
-    <script src="../jquery.datetimepicker.js"></script>
-    <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
-    <script src="../vendor/jquery/jquery.min.js"></script>
     <script src="../vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="../vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="../vendor/datatables-responsive/dataTables.responsive.js"></script>
+    <script src="../vendor/raphael/raphael.min.js"></script>
+    <script src="../vendor/morrisjs/morris.min.js"></script>
+    <!-- <script src="../data/morris-data.js"></script> --> <!-- comentado pois arquivo não existe -->
+    <script src="../dist/js/sb-admin-2.js"></script> 
+    <script src="../assets/js/jquery.backstretch.min.js"></script>
+    <script src="../assets/js/scripts.js"></script>
+    <script src="../utils.js?<?php echo Version; ?>"></script>
 </head>
 
 <body>

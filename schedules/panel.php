@@ -18,6 +18,8 @@ $waiting = 0;
 $inOperation = 0;
 $operationDone = 0;
 $done = 0;
+$scaneadas = 0;
+$scaneadas = 0;
 $inlocal = 0;
 
 if(isset($_GET['startDate']) && $_GET['startDate'] != null){
@@ -62,10 +64,87 @@ $waiting = 0;
 $inOperation = 0;
 $operationDone = 0;
 $done = 0;
+$scaneadas = 0;
+
+// Initialize data arrays
+$statusData = [
+    'Agendado' => ['count' => 0, 'carga' => 0, 'docas' => [], 'nfs' => [], 'transportadoras' => [], 'shipments' => []],
+    'Aguardando' => ['count' => 0, 'carga' => 0, 'docas' => [], 'nfs' => [], 'transportadoras' => [], 'shipments' => []],
+    'Em operação' => ['count' => 0, 'carga' => 0, 'docas' => [], 'nfs' => [], 'transportadoras' => [], 'shipments' => []],
+    'Fim de operação' => ['count' => 0, 'carga' => 0, 'docas' => [], 'nfs' => [], 'transportadoras' => [], 'shipments' => []],
+    'Liberado' => ['count' => 0, 'carga' => 0, 'docas' => [], 'nfs' => [], 'transportadoras' => [], 'shipments' => []],
+    'Cargas Scaneadas' => ['count' => 0, 'carga' => 0, 'docas' => [], 'nfs' => [], 'transportadoras' => [], 'shipments' => []]
+];
 
 foreach ($schedules as $schedule) {
+    $status = $schedule['getStatus'] ?? 'Agendado';
+    if (!isset($statusData[$status])) {
+        $status = 'Agendado';
+    }
+    
+    $statusData[$status]['count']++;
+    
+    // Collect individual shipment details
+    $shipmentData = [
+        'shipment_id' => $schedule['getShipmentId'] ?? '',
+        'operacao' => $schedule['getOperacao'] ?? '',
+        'data_agendamento' => $schedule['getDataAgendamento'] ?? ''
+    ];
+    $statusData[$status]['shipments'][] = $shipmentData;
+    
+    // Check if carga is scaneada
+    $scaneado = $schedule['getScaneado'] ?? 'Não';
+    if ($scaneado === 'Sim' && $status === 'Agendado') {
+        $scaneadas++;
+        $statusData['Cargas Scaneadas']['count']++;
+        $statusData['Cargas Scaneadas']['shipments'][] = $shipmentData;
+        
+        // Add carga to Cargas Scaneadas
+        $cargaScaneada = $schedule['getCargaQtde'] ?? 0;
+        $statusData['Cargas Scaneadas']['carga'] += floatval($cargaScaneada);
+        
+        // Add doca to Cargas Scaneadas
+        $docaScaneada = $schedule['getDoca'] ?? '';
+        if ($docaScaneada) {
+            $statusData['Cargas Scaneadas']['docas'][$docaScaneada] = true;
+        }
+        
+        // Add NF to Cargas Scaneadas
+        $nfScaneada = $schedule['getNf'] ?? '';
+        if ($nfScaneada) {
+            $statusData['Cargas Scaneadas']['nfs'][$nfScaneada] = true;
+        }
+        
+        // Add transportadora to Cargas Scaneadas
+        $transportadoraScaneada = $schedule['getTransportadora'] ?? '';
+        if ($transportadoraScaneada) {
+            $statusData['Cargas Scaneadas']['transportadoras'][$transportadoraScaneada] = true;
+        }
+    }
+    
+    // Add carga
+    $carga = $schedule['getCargaQtde'] ?? 0;
+    $statusData[$status]['carga'] += floatval($carga);
+    
+    // Add doca
+    $doca = $schedule['getDoca'] ?? '';
+    if ($doca) {
+        $statusData[$status]['docas'][$doca] = true;
+    }
+    
+    // Add NF
+    $nf = $schedule['getNf'] ?? '';
+    if ($nf) {
+        $statusData[$status]['nfs'][$nf] = true;
+    }
+    
+    // Add transportadora
+    $transportadora = $schedule['getTransportadora'] ?? '';
+    if ($transportadora) {
+        $statusData[$status]['transportadoras'][$transportadora] = true;
+    }
 
-    switch ($schedule['getStatus']) {
+    switch ($status) {
         case 'Agendado':
             $scheduled++;
             break;
@@ -149,41 +228,155 @@ foreach ($schedules as $schedule) {
                 </div>
             </div>
             <div class="panel-home">
-                <div class="schedule-box-status box-gray" onclick="navigateToSearch('Agendado')">
-                    <div class="box-home-header">
-                        <p>Agendados</p>
-                        <img src="../images/home-icons/schedule-truck.png"></img>
-                        <p class="home-box-text"><?=$scheduled ?></p>
+                <div class="card-wrapper">
+                    <div class="schedule-box-status box-gray" onclick="navigateToSearch('Agendado')">
+                        <div class="box-home-header">
+                            <p>Agendados</p>
+                            <img src="../images/home-icons/schedule-truck.png"></img>
+                            <p class="home-box-text"><?=$scheduled ?></p>
+                        </div>
+                    </div>
+                    <div class="card-details-grid card-shipments-grid">
+                        <?php foreach ($statusData['Agendado']['shipments'] as $shipment): ?>
+                            <div class="detail-item">
+                                <span class="detail-label">Shipment</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Operação</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Data</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="schedule-box-status box-orange" onclick="navigateToSearch('Aguardando')">
-                    <div class="box-home-header">
-                        <p>Aguardando</p>
-                        <img src="../images/home-icons/empty-truck.png"></img>
-                        <p class="home-box-text"><?=$waiting ?></p>
+                <div class="card-wrapper">
+                    <div class="schedule-box-status box-purple" onclick="navigateToSearch('Agendado')">
+                        <div class="box-home-header">
+                            <p>Cargas Scaneadas</p>
+                            <img src="../images/home-icons/schedule-truck.png"></img>
+                            <p class="home-box-text"><?=$scaneadas ?></p>
+                        </div>
+                    </div>
+                    <div class="card-details-grid card-shipments-grid">
+                        <?php foreach ($statusData['Cargas Scaneadas']['shipments'] as $shipment): ?>
+                            <div class="detail-item">
+                                <span class="detail-label">Shipment</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Operação</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Data</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="schedule-box-status box-blue" onclick="navigateToSearch('Em operação')">
-                    <div class="box-home-header">
-                        <p>Em operação</p>
-                        <img src="../images/home-icons/operation-truck.png"></img>
-                        <p class="home-box-text"><?=$inOperation ?></p>
+                <div class="card-wrapper">
+                    <div class="schedule-box-status box-orange" onclick="navigateToSearch('Aguardando')">
+                        <div class="box-home-header">
+                            <p>Aguardando</p>
+                            <img src="../images/home-icons/empty-truck.png"></img>
+                            <p class="home-box-text"><?=$waiting ?></p>
+                        </div>
+                    </div>
+                    <div class="card-details-grid card-shipments-grid">
+                        <?php foreach ($statusData['Aguardando']['shipments'] as $shipment): ?>
+                            <div class="detail-item">
+                                <span class="detail-label">Shipment</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Operação</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Data</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="schedule-box-status box-yellow" onclick="navigateToSearch('Fim de operação')">
-                    <div class="box-home-header">
-                        <p>Fim de operação</p>
-                        <img src="../images/home-icons/full-truck.png"></img>
-                        <p class="home-box-text"><?=$operationDone ?></p>
+                <div class="card-wrapper">
+                    <div class="schedule-box-status box-blue" onclick="navigateToSearch('Em operação')">
+                        <div class="box-home-header">
+                            <p>Em operação</p>
+                            <img src="../images/home-icons/operation-truck.png"></img>
+                            <p class="home-box-text"><?=$inOperation ?></p>
+                        </div>
+                    </div>
+                    <div class="card-details-grid card-shipments-grid">
+                        <?php foreach ($statusData['Em operação']['shipments'] as $shipment): ?>
+                            <div class="detail-item">
+                                <span class="detail-label">Shipment</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Operação</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Data</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-                <div class="schedule-box-status box-green" onclick="navigateToSearch('Liberado')">
-                    <div class="box-home-header">
-                        <p>Liberados</p>
-                        <img src="../images/home-icons/done-truck.png"></img>
-                        <p class="home-box-text"><?=$done ?></p>
+                <div class="card-wrapper">
+                    <div class="schedule-box-status box-yellow" onclick="navigateToSearch('Fim de operação')">
+                        <div class="box-home-header">
+                            <p>Fim de operação</p>
+                            <img src="../images/home-icons/full-truck.png"></img>
+                            <p class="home-box-text"><?=$operationDone ?></p>
+                        </div>
                     </div>
-                    
+                    <div class="card-details-grid card-shipments-grid">
+                        <?php foreach ($statusData['Fim de operação']['shipments'] as $shipment): ?>
+                            <div class="detail-item">
+                                <span class="detail-label">Shipment</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Operação</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Data</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="card-wrapper">
+                    <div class="schedule-box-status box-green" onclick="navigateToSearch('Liberado')">
+                        <div class="box-home-header">
+                            <p>Liberados</p>
+                            <img src="../images/home-icons/done-truck.png"></img>
+                            <p class="home-box-text"><?=$done ?></p>
+                        </div>
+                    </div>
+                    <div class="card-details-grid card-shipments-grid">
+                        <?php foreach ($statusData['Liberado']['shipments'] as $shipment): ?>
+                            <div class="detail-item">
+                                <span class="detail-label">Shipment</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Operação</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Data</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
             <div class="panel-progress">

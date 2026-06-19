@@ -31,8 +31,10 @@ $columns = [
     'pallets'              => ['name' => 'pallets',               'label'=> 'Paletes',        'order' => 21, 'value' => 'getCargaQtde',          'columnSize'=> 'td-70',  'show' => true],
     'material'             => ['name' => 'material',              'label'=> 'Material',       'order' => 22, 'value' => 'getDadosGerais',        'columnSize'=> 'td-150', 'show' => true],
     'observation'          => ['name' => 'observation',           'label'=> 'Observação',     'order' => 23, 'value' => 'getObservacao',         'columnSize'=> 'td-150', 'show' => true],
-    'operator'             => ['name' => 'operator',              'label'=> 'Operador',       'order' => 24, 'value' => 'getOperator',           'columnSize'=> 'td-150', 'show' => $fieldsAccess],
-    'checker'              => ['name' => 'checker',               'label'=> 'Conferente',     'order' => 25, 'value' => 'getChecker',            'columnSize'=> 'td-150', 'show' => $fieldsAccess],
+    'operator'             => ['name' => 'operator',              'label' => 'Operador',       'order' => 24, 'value' => 'getOperator',           'columnSize' => 'td-150', 'show' => $fieldsAccess],
+    'checker'              => ['name' => 'checker',               'label' => 'Conferente',     'order' => 25, 'value' => 'getChecker',            'columnSize' => 'td-150', 'show' => $fieldsAccess],
+    'scaneado'             => ['name' => 'scaneado',              'label' => 'Scaneado',       'order' => 26, 'value' => 'getScaneado',           'columnSize' => 'td-70',  'show' => true],
+    'carga_em_qualidade'   => ['name' => 'carga_em_qualidade',    'label' => 'Carga em Qual.', 'order' => 27, 'value' => 'getCargaEmQualidade',   'columnSize' => 'td-70',  'show' => true],
 ];
 
 $scheduleController = new ScheduleController($MySQLi);

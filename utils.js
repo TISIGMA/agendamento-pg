@@ -31,42 +31,15 @@ function dateTimeMask(value) {
 jQuery(function($){
     var bindDatePicker = function() {
          $(".date").datetimepicker({
-         format:'DD/MM/YYYY hh:mm:ss',
+         format:'DD/MM/YYYY HH:mm:ss',
              icons: {
                  time: "fa fa-clock-o",
                  date: "fa fa-calendar",
                  up: "fa fa-arrow-up",
                  down: "fa fa-arrow-down"
              }
-         }).find('input:first').on("blur",function () {
-             var date = parseDate($(this).val());
- 
-             if (! isValidDate(date)) {
-                 date = moment().format('YYYY-MM-DD');
-             }
- 
-             $(this).val(date);
          });
      }
-    
-    var isValidDate = function(value, format) {
-         format = format || false;
-         if (format) {
-             value = parseDate(value);
-         }
- 
-         var timestamp = Date.parse(value);
- 
-         return isNaN(timestamp) == false;
-    }
-    
-    var parseDate = function(value) {
-         var m = value.match(/^(\d{1,2})(\/|-)?(\d{1,2})(\/|-)?(\d{4})$/);
-         if (m)
-             value = m[5] + '-' + ("00" + m[3]).slice(-2) + '-' + ("00" + m[1]).slice(-2);
- 
-         return value;
-    }
     
     bindDatePicker();
 
@@ -263,11 +236,14 @@ const dateTimeHandleBlur = (element) => {
             element.value = '';
         }, 10);
     }else{
-        setTimeout(() => {
-            element.innerHTML = dateTimeValue;
-            element.value = dateTimeValue;
-            dateTimeHandleKeyUp(element);
-        }, 10);
+        // Só aplica a máscara se o valor não estiver completo (19 caracteres)
+        if (dateTimeValue.length < 19) {
+            setTimeout(() => {
+                element.innerHTML = dateTimeValue;
+                element.value = dateTimeValue;
+                dateTimeHandleKeyUp(element);
+            }, 10);
+        }
     }
 }
 
@@ -705,7 +681,7 @@ const navigateToSearch = (scheduleStatus) => {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
 
-    window.location =  `index.php?conteudo=searchSchedule.php&status=${scheduleStatus}&startDate=${startDate}&endDate=${endDate}`;
+    window.location =  `index.php?conteudo=searchSchedule.php&status=${encodeURIComponent(scheduleStatus)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
 }
 
 const backHistory = () => {

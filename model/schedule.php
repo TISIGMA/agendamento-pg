@@ -44,6 +44,8 @@ class Schedule{
     private $attCertificateStatus;
     private $attBoardingStatus;
     private $attOtherStatus;
+    private $scaneado;
+    private $carga_em_qualidade;
 
 
     public function setId($id){
@@ -309,6 +311,22 @@ class Schedule{
     }
     public function getAttOtherStatus(){
         return $this->attOtherStatus;
+    }
+
+    public function setScaneado($scaneado){
+        $this->scaneado = $scaneado;
+    }
+    
+    public function getScaneado(){
+        return $this->scaneado;
+    }
+
+    public function setCargaEmQualidade($carga_em_qualidade){
+        $this->carga_em_qualidade = $carga_em_qualidade;
+    }
+    
+    public function getCargaEmQualidade(){
+        return $this->carga_em_qualidade;
     }
 }
 

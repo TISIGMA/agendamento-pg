@@ -340,6 +340,8 @@ class ScheduleController{
         $schedule->setAttCertificateStatus($post['certificate-status']);
         $schedule->setAttBoardingStatus($post['boarding-status']);
         $schedule->setAttOtherStatus($post['other-status']);
+        $schedule->setScaneado(isset($post['scaneado']) ? $post['scaneado'] : 'Não');
+        $schedule->setCargaEmQualidade(isset($post['carga_em_qualidade']) ? $post['carga_em_qualidade'] : 'Não');
 
         return $schedule;
     }
@@ -399,8 +401,10 @@ class ScheduleController{
             $schedule['getOperationId'] = $this->getRecordValue($data, 'operation_type_id');
             $schedule['getOperator'] = $this->getRecordValue($data, 'operator');
             $schedule['getChecker'] = $this->getRecordValue($data, 'checker');
-            $schedule['getLastModifiedBy'] = $this->getRecordValue($data, 'last_modified_by');
-            $schedule['getLastModifiedDate'] = $this->formatDateTime($this->getRecordValue($data, 'last_modified_date'));
+        $schedule['getLastModifiedBy'] = $this->getRecordValue($data, 'last_modified_by');
+        $schedule['getLastModifiedDate'] = $this->formatDateTime($this->getRecordValue($data, 'last_modified_date'));
+        $schedule['getScaneado'] = $this->getRecordValue($data, 'scaneado');
+        $schedule['getCargaEmQualidade'] = $this->getRecordValue($data, 'carga_em_qualidade');
 
             array_push($schedules, $schedule);
         }
@@ -450,6 +454,8 @@ class ScheduleController{
             $schedule->setChecker($this->getRecordValue($data, 'checker'));
             $schedule->setLastModifiedBy($this->getRecordValue($data, 'last_modified_by'));
             $schedule->setLastModifiedDate($this->formatDateTime($this->getRecordValue($data, 'last_modified_date')));
+            $schedule->setScaneado($this->getRecordValue($data, 'scaneado'));
+            $schedule->setCargaEmQualidade($this->getRecordValue($data, 'carga_em_qualidade'));
 
             $schedule->setAttPickingStatus($this->getRecordValue($data, 'attatchment_picking_status'));
             $schedule->setAttInvoiceStatus($this->getRecordValue($data, 'attatchment_invoice_status'));

@@ -45,17 +45,27 @@ if(isset($_GET['conteudo'])) {
     <link href="custom-style.css" rel="stylesheet">
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-    <script src="vendor/raphael/raphael.min.js"></script>
-    <script src="vendor/morrisjs/morris.min.js"></script>
-    <script src="data/morris-data.js"></script>
+    <!-- jQuery (primeiro, pois as outras libs dependem dele) -->
     <script src="vendor/jquery/jquery.min.js"></script>
+    
+    <!-- Moment.js (dependência do datetimepicker) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/pt-br.js"></script>
+    
+    <!-- Bootstrap Datetimepicker (versão compatível) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    
+    <!-- Outras libs (ordem correta) -->
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
     <script src="vendor/metisMenu/metisMenu.min.js"></script>
     <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
     <script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
     <script src="https://igorescobar.github.io/jQuery-Mask-Plugin/js/jquery.mask.min.js"></script>
-    <script src="../jQuery-Mask-Plugin-master/"></script>
+    <script src="vendor/raphael/raphael.min.js"></script>
+    <script src="vendor/morrisjs/morris.min.js"></script>
+    <!-- <script src="data/morris-data.js"></script> --> <!-- comentado pois arquivo não existe -->
     <script src="dist/js/sb-admin-2.js"></script>
     <script src="utils.js"></script>
 </head>

@@ -49,5 +49,7 @@ class Schedule extends Model
         'attatchment_certificate_status',
         'attatchment_boarding_status',
         'attatchment_other_status',
+        'scaneado',
+        'carga_em_qualidade',
     ];
 }
