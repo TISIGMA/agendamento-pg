@@ -82,17 +82,19 @@ foreach ($schedules as $schedule) {
         $status = 'Agendado';
     }
     
+    $statusData[$status]['count']++;
+    
     // Collect individual shipment details
     $shipmentData = [
         'shipment_id' => $schedule['getShipmentId'] ?? '',
         'operacao' => $schedule['getOperacao'] ?? '',
         'data_agendamento' => $schedule['getDataAgendamento'] ?? ''
     ];
+    $statusData[$status]['shipments'][] = $shipmentData;
     
-    // Check if carga is scaneada (only if status is Agendado)
+    // Check if carga is scaneada
     $scaneado = $schedule['getScaneado'] ?? 'Não';
     if ($scaneado === 'Sim' && $status === 'Agendado') {
-        // Only add to Cargas Scaneadas
         $scaneadas++;
         $statusData['Cargas Scaneadas']['count']++;
         $statusData['Cargas Scaneadas']['shipments'][] = $shipmentData;
@@ -118,64 +120,57 @@ foreach ($schedules as $schedule) {
         if ($transportadoraScaneada) {
             $statusData['Cargas Scaneadas']['transportadoras'][$transportadoraScaneada] = true;
         }
-    } else {
-        // Add to normal status
-        $statusData[$status]['count']++;
-        $statusData[$status]['shipments'][] = $shipmentData;
-        
-        // Add carga
-        $carga = $schedule['getCargaQtde'] ?? 0;
-        $statusData[$status]['carga'] += floatval($carga);
-        
-        // Add doca
-        $doca = $schedule['getDoca'] ?? '';
-        if ($doca) {
-            $statusData[$status]['docas'][$doca] = true;
-        }
-        
-        // Add NF
-        $nf = $schedule['getNf'] ?? '';
-        if ($nf) {
-            $statusData[$status]['nfs'][$nf] = true;
-        }
-        
-        // Add transportadora
-        $transportadora = $schedule['getTransportadora'] ?? '';
-        if ($transportadora) {
-            $statusData[$status]['transportadoras'][$transportadora] = true;
-        }
+    }
+    
+    // Add carga
+    $carga = $schedule['getCargaQtde'] ?? 0;
+    $statusData[$status]['carga'] += floatval($carga);
+    
+    // Add doca
+    $doca = $schedule['getDoca'] ?? '';
+    if ($doca) {
+        $statusData[$status]['docas'][$doca] = true;
+    }
+    
+    // Add NF
+    $nf = $schedule['getNf'] ?? '';
+    if ($nf) {
+        $statusData[$status]['nfs'][$nf] = true;
+    }
+    
+    // Add transportadora
+    $transportadora = $schedule['getTransportadora'] ?? '';
+    if ($transportadora) {
+        $statusData[$status]['transportadoras'][$transportadora] = true;
     }
 
-    // Only count in status counters if not scaneada (or not Agendado)
-    if (!($scaneado === 'Sim' && $status === 'Agendado')) {
-        switch ($status) {
-            case 'Agendado':
-                $scheduled++;
-                break;
+    switch ($status) {
+        case 'Agendado':
+            $scheduled++;
+            break;
 
-            case 'Aguardando':
-                $waiting++;
-                $inlocal++;
-                break;
+        case 'Aguardando':
+            $waiting++;
+            $inlocal++;
+            break;
 
-            case 'Em operação':
-                $inOperation++;
-                $inlocal++;
-                break;
+        case 'Em operação':
+            $inOperation++;
+            $inlocal++;
+            break;
 
-            case 'Fim de operação':
-                $operationDone++;
-                $inlocal++;
-                break;
+        case 'Fim de operação':
+            $operationDone++;
+            $inlocal++;
+            break;
 
-            case 'Liberado':
-                $done++;
-                break;
-            
-            default:
-                $scheduled++;
-                break;
-        }
+        case 'Liberado':
+            $done++;
+            break;
+        
+        default:
+            $scheduled++;
+            break;
     }
     
 }
