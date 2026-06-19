@@ -200,10 +200,10 @@ class ScheduleRepository{
                 $data['attatchment_boarding_status'] = $schedule->getAttBoardingStatus();
                 $data['attatchment_other_status'] = $schedule->getAttOtherStatus();
                 $data['checker'] = $schedule->getChecker();
-        $data['scaneado'] = $schedule->getScaneado();
-        $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
+                $data['scaneado'] = $schedule->getScaneado();
+                $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
 
-        $id = Capsule::table('janela')->insertGetId($data);
+                $id = Capsule::table('janela')->insertGetId($data);
                 return $id;
             }
 
@@ -246,10 +246,10 @@ class ScheduleRepository{
             $sql .= "attatchment_other_status = '".$schedule->getAttOtherStatus()."', ";
 
             $sql .= "checker = '".$schedule->getChecker()."', ";
-                $sql .= "scaneado = '".$schedule->getScaneado()."', ";
-                $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."'";
+            $sql .= "scaneado = '".$schedule->getScaneado()."', ";
+            $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."'";
 
-                $result = $this->mySql->query($sql);
+            $result = $this->mySql->query($sql);
 
             if(!$result) return 'SAVE_ERROR';
 
@@ -330,12 +330,12 @@ class ScheduleRepository{
                 $data['attatchment_boarding_status'] = $schedule->getAttBoardingStatus();
                 $data['attatchment_other_status'] = $schedule->getAttOtherStatus();
                 $data['checker'] = $schedule->getChecker();
-        $data['scaneado'] = $schedule->getScaneado();
-        $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
+                $data['scaneado'] = $schedule->getScaneado();
+                $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
 
-        Capsule::table('janela')
-            ->where('id', (int) $id)
-            ->update($data);
+                Capsule::table('janela')
+                    ->where('id', (int) $id)
+                    ->update($data);
 
                 return 'UPDATED';
             }
@@ -379,9 +379,9 @@ class ScheduleRepository{
             $sql .= "attatchment_other_status = '".$schedule->getAttOtherStatus()."', ";
 
             $sql .= "checker = '".$schedule->getChecker()."', ";
-                $sql .= "scaneado = '".$schedule->getScaneado()."', ";
-                $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."'";
-                $sql .= " WHERE ID = ".$id;  
+            $sql .= "scaneado = '".$schedule->getScaneado()."', ";
+            $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."'";
+            $sql .= " WHERE ID = ".$id;  
 
             $result = $this->mySql->query($sql);
             return 'UPDATED';
@@ -493,13 +493,13 @@ class ScheduleRepository{
             'last_modified_by',
             'last_modified_date',
             'attatchment_picking_status',
-        'attatchment_invoice_status',
-        'attatchment_certificate_status',
-        'attatchment_boarding_status',
-        'attatchment_other_status',
-        'scaneado',
-        'carga_em_qualidade',
-    ];
+            'attatchment_invoice_status',
+            'attatchment_certificate_status',
+            'attatchment_boarding_status',
+            'attatchment_other_status',
+            'scaneado',
+            'carga_em_qualidade',
+        ];
     }
 }
 ?>
