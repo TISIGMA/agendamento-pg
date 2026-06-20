@@ -271,6 +271,7 @@ foreach ($schedules as $schedule) {
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
                             $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
+                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: pointer; padding: 8px 0;">
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
@@ -290,11 +291,7 @@ foreach ($schedules as $schedule) {
                                     <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
                                 </div>
                             </div>
-                            <div class="detail-item">
-                                <button class="btn btn-xs btn-success mark-scaneado-btn" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="margin-top: 5px; cursor: pointer;">
-                                    Scan
-                                </button>
-                            </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -323,6 +320,7 @@ foreach ($schedules as $schedule) {
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
                             $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
+                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
@@ -344,6 +342,7 @@ foreach ($schedules as $schedule) {
                             </div>
                             <div class="detail-item">
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -372,6 +371,7 @@ foreach ($schedules as $schedule) {
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
                             $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
+                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
@@ -393,6 +393,7 @@ foreach ($schedules as $schedule) {
                             </div>
                             <div class="detail-item">
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -421,6 +422,7 @@ foreach ($schedules as $schedule) {
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
                             $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
+                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
@@ -442,6 +444,7 @@ foreach ($schedules as $schedule) {
                             </div>
                             <div class="detail-item">
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -470,6 +473,7 @@ foreach ($schedules as $schedule) {
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
                             $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
+                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
@@ -491,6 +495,7 @@ foreach ($schedules as $schedule) {
                             </div>
                             <div class="detail-item">
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -519,6 +524,7 @@ foreach ($schedules as $schedule) {
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
                             $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
+                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
@@ -540,6 +546,7 @@ foreach ($schedules as $schedule) {
                             </div>
                             <div class="detail-item">
                             </div>
+                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -553,12 +560,17 @@ foreach ($schedules as $schedule) {
 $(document).ready(function() {
     console.log('Document ready');
     
-    $('.mark-scaneado-btn').on('click', function(e) {
+    $('.shipment-item').on('click', function(e) {
         e.preventDefault();
-        e.stopPropagation(); // Evita que o clique no botão acione o clique no card
         
         var id = $(this).data('id');
-        console.log('Clicou no botão para ID:', id);
+        var isClicable = $(this).css('cursor') === 'pointer';
+        
+        if (!isClicable) {
+            return;
+        }
+        
+        console.log('Clicou no item para ID:', id);
         
         $.ajax({
             url: 'update-status.php',
