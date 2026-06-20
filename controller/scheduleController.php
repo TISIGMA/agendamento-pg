@@ -363,15 +363,18 @@ class ScheduleController{
     public function loadDataByNameValue($records){
 
         $schedules = array();
+        $scheduleIds = array();
 
         foreach ($this->getRecordsIterator($records) as $data){
             $schedule = array();
 
             $schedule['getId'] = $this->getRecordValue($data, 'id');
+            $scheduleIds[] = $schedule['getId'];
             $schedule['getTransportadora'] = $this->getRecordValue($data, 'transportadora');
             $schedule['getTipoVeiculo'] = $this->getRecordValue($data, 'tipoVeiculo');
             $schedule['getPlacaCavalo'] = $this->getRecordValue($data, 'placa_cavalo');
             $schedule['getOperacao'] = $this->getRecordValue($data, 'operacao');
+            $schedule['getDestino'] = $this->getRecordValue($data, 'destino');
             $schedule['getNf'] = $this->getRecordValue($data, 'nf');
 
             $schedule['getHoraChegada'] = $this->formatDateTime($this->getRecordValue($data, 'horaChegada'));
@@ -401,13 +404,29 @@ class ScheduleController{
             $schedule['getOperationId'] = $this->getRecordValue($data, 'operation_type_id');
             $schedule['getOperator'] = $this->getRecordValue($data, 'operator');
             $schedule['getChecker'] = $this->getRecordValue($data, 'checker');
-        $schedule['getLastModifiedBy'] = $this->getRecordValue($data, 'last_modified_by');
-        $schedule['getLastModifiedDate'] = $this->formatDateTime($this->getRecordValue($data, 'last_modified_date'));
-        $schedule['getScaneado'] = $this->getRecordValue($data, 'scaneado');
-        $schedule['getCargaEmQualidade'] = $this->getRecordValue($data, 'carga_em_qualidade');
+            $schedule['getLastModifiedBy'] = $this->getRecordValue($data, 'last_modified_by');
+            $schedule['getLastModifiedDate'] = $this->formatDateTime($this->getRecordValue($data, 'last_modified_date'));
+            $schedule['getScaneado'] = $this->getRecordValue($data, 'scaneado');
+            $schedule['getCargaEmQualidade'] = $this->getRecordValue($data, 'carga_em_qualidade');
 
             array_push($schedules, $schedule);
         }
+        
+        // Consulta todos os anexos em uma única query (otimização)
+        $attachmentsBySchedule = $this->attachmentRepository->getAttachmentsByScheduleIds($scheduleIds);
+        
+        // Associa os anexos aos agendamentos
+        foreach ($schedules as &$schedule) {
+            $scheduleId = $schedule['getId'];
+            $hasAttachments = isset($attachmentsBySchedule[$scheduleId]) ? $attachmentsBySchedule[$scheduleId] : [];
+            
+            $schedule['has_invoice'] = isset($hasAttachments['invoice']);
+            $schedule['has_picking'] = isset($hasAttachments['picking']);
+            $schedule['has_certificate'] = isset($hasAttachments['certificate']);
+            $schedule['has_boarding'] = isset($hasAttachments['boarding']);
+            $schedule['has_other'] = isset($hasAttachments['other']);
+        }
+        unset($schedule);
 
         return $schedules;
     }

@@ -94,7 +94,12 @@ foreach ($schedules as $schedule) {
                 'att_boarding_status' => $schedule['getAttBoardingStatus'] ?? 'open',
                 'att_other_status' => $schedule['getAttOtherStatus'] ?? 'open',
                 'scaneado' => $schedule['getScaneado'] ?? 'Não',
-                'carga_em_qualidade' => $schedule['getCargaEmQualidade'] ?? 'Não'
+                'carga_em_qualidade' => $schedule['getCargaEmQualidade'] ?? 'Não',
+                'has_invoice' => $schedule['has_invoice'] ?? false,
+                'has_picking' => $schedule['has_picking'] ?? false,
+                'has_certificate' => $schedule['has_certificate'] ?? false,
+                'has_boarding' => $schedule['has_boarding'] ?? false,
+                'has_other' => $schedule['has_other'] ?? false
             ];
     
     // Check if carga is scaneada - se for, adiciona apenas ao card "Cargas Scaneadas"
@@ -250,19 +255,20 @@ foreach ($schedules as $schedule) {
                     </div>
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Agendado']['shipments'] as $shipment): 
-                            // Verifica status da NF
-                            $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
+                            // Verifica status da NF - verifica se tem anexo ou status closed
+                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
+                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
+                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
                             
-                            // Verifica status dos outros documentos
-                            $allDocsOk = (
-                                $shipment['att_picking_status'] === 'closed' &&
-                                $shipment['att_certificate_status'] === 'closed' &&
-                                $shipment['att_boarding_status'] === 'closed' &&
-                                $shipment['att_other_status'] === 'closed'
-                            );
+                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
+                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
+                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
+                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
+                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
+                            
+                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
+                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -297,16 +303,20 @@ foreach ($schedules as $schedule) {
                     </div>
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Cargas Scaneadas']['shipments'] as $shipment): 
-                            $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
-                            $allDocsOk = (
-                                $shipment['att_picking_status'] === 'closed' &&
-                                $shipment['att_certificate_status'] === 'closed' &&
-                                $shipment['att_boarding_status'] === 'closed' &&
-                                $shipment['att_other_status'] === 'closed'
-                            );
+                            // Verifica status da NF - verifica se tem anexo ou status closed
+                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
+                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
+                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
+                            
+                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
+                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
+                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
+                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
+                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
+                            
+                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
+                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -338,16 +348,20 @@ foreach ($schedules as $schedule) {
                     </div>
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Aguardando']['shipments'] as $shipment): 
-                            $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
-                            $allDocsOk = (
-                                $shipment['att_picking_status'] === 'closed' &&
-                                $shipment['att_certificate_status'] === 'closed' &&
-                                $shipment['att_boarding_status'] === 'closed' &&
-                                $shipment['att_other_status'] === 'closed'
-                            );
+                            // Verifica status da NF - verifica se tem anexo ou status closed
+                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
+                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
+                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
+                            
+                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
+                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
+                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
+                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
+                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
+                            
+                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
+                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -379,16 +393,20 @@ foreach ($schedules as $schedule) {
                     </div>
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Em operação']['shipments'] as $shipment): 
-                            $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
-                            $allDocsOk = (
-                                $shipment['att_picking_status'] === 'closed' &&
-                                $shipment['att_certificate_status'] === 'closed' &&
-                                $shipment['att_boarding_status'] === 'closed' &&
-                                $shipment['att_other_status'] === 'closed'
-                            );
+                            // Verifica status da NF - verifica se tem anexo ou status closed
+                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
+                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
+                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
+                            
+                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
+                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
+                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
+                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
+                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
+                            
+                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
+                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -420,16 +438,20 @@ foreach ($schedules as $schedule) {
                     </div>
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Fim de operação']['shipments'] as $shipment): 
-                            $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
-                            $allDocsOk = (
-                                $shipment['att_picking_status'] === 'closed' &&
-                                $shipment['att_certificate_status'] === 'closed' &&
-                                $shipment['att_boarding_status'] === 'closed' &&
-                                $shipment['att_other_status'] === 'closed'
-                            );
+                            // Verifica status da NF - verifica se tem anexo ou status closed
+                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
+                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
+                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
+                            
+                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
+                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
+                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
+                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
+                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
+                            
+                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
+                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -461,16 +483,20 @@ foreach ($schedules as $schedule) {
                     </div>
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Liberado']['shipments'] as $shipment): 
-                            $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
-                            $allDocsOk = (
-                                $shipment['att_picking_status'] === 'closed' &&
-                                $shipment['att_certificate_status'] === 'closed' &&
-                                $shipment['att_boarding_status'] === 'closed' &&
-                                $shipment['att_other_status'] === 'closed'
-                            );
+                            // Verifica status da NF - verifica se tem anexo ou status closed
+                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
+                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
+                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
+                            
+                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
+                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
+                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
+                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
+                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
+                            
+                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
+                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>

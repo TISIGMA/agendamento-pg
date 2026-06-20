@@ -632,6 +632,32 @@ td{
     word-break: break-word;
 }
 
+/* Status Badges */
+.status-badge {
+    display: inline-block !important;
+    padding: 4px 10px !important;
+    border-radius: 12px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.badge-green {
+    background: linear-gradient(145deg, #52d772 0%, #3ab558 100%) !important;
+    color: #ffffff !important;
+}
+
+.badge-red {
+    background: linear-gradient(145deg, #e74c3c 0%, #c0392b 100%) !important;
+    color: #ffffff !important;
+}
+
+.badge-yellow {
+    background: linear-gradient(145deg, #f1c40f 0%, #d4ac0d 100%) !important;
+    color: #000000 !important;
+}
+
 /* Card Principal (sem duplicatas) */
 .schedule-box-status{
     text-decoration: none !important;

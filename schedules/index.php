@@ -6,7 +6,7 @@ require_once('../controller/customerController.php');
 require_once('../utils.php');
 
 //controla versão de arquivos css e javascript para forçar o carregamento da versão atualizada
-define('Version', '13');
+define('Version', '15');
 
 if($_SESSION['nome'] == null){
 	header('LOCATION:../index.php');
