@@ -374,7 +374,6 @@ class ScheduleController{
             $schedule['getTipoVeiculo'] = $this->getRecordValue($data, 'tipoVeiculo');
             $schedule['getPlacaCavalo'] = $this->getRecordValue($data, 'placa_cavalo');
             $schedule['getOperacao'] = $this->getRecordValue($data, 'operacao');
-            $schedule['getDestino'] = $this->getRecordValue($data, 'destino');
             $schedule['getNf'] = $this->getRecordValue($data, 'nf');
 
             $schedule['getHoraChegada'] = $this->formatDateTime($this->getRecordValue($data, 'horaChegada'));

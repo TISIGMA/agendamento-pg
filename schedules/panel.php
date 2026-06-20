@@ -87,6 +87,7 @@ foreach ($schedules as $schedule) {
                 'id' => $schedule['getId'] ?? '',
                 'shipment_id' => $schedule['getShipmentId'] ?? '',
                 'operacao' => $schedule['getOperacao'] ?? '',
+                'cidade' => $schedule['getCidade'] ?? '',
                 'data_agendamento' => $schedule['getDataAgendamento'] ?? '',
                 'att_invoice_status' => $schedule['getAttInvoiceStatus'] ?? 'open',
                 'att_picking_status' => $schedule['getAttPickingStatus'] ?? 'open',
@@ -275,8 +276,12 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Operação</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                                <span class="detail-label">Data Agendamento</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cidade</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
@@ -323,8 +328,12 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Operação</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                                <span class="detail-label">Data Agendamento</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cidade</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
@@ -368,8 +377,12 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Operação</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                                <span class="detail-label">Data Agendamento</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cidade</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
@@ -413,8 +426,12 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Operação</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                                <span class="detail-label">Data Agendamento</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cidade</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
@@ -458,8 +475,12 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Operação</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                                <span class="detail-label">Data Agendamento</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cidade</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
@@ -503,8 +524,12 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Operação</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['operacao'] ?: '-') ?></span>
+                                <span class="detail-label">Data Agendamento</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cidade</span>
+                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Status</span>
