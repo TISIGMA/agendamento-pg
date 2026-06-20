@@ -252,7 +252,7 @@ foreach ($schedules as $schedule) {
                         <?php foreach ($statusData['Agendado']['shipments'] as $shipment): 
                             // Verifica status da NF
                             $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF OK' : 'NF Pendente';
+                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
                             
                             // Verifica status dos outros documentos
                             $allDocsOk = (
@@ -262,7 +262,7 @@ foreach ($schedules as $schedule) {
                                 $shipment['att_other_status'] === 'closed'
                             );
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs OK' : 'Docs Pendentes';
+                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -298,7 +298,7 @@ foreach ($schedules as $schedule) {
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Cargas Scaneadas']['shipments'] as $shipment): 
                             $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF OK' : 'NF Pendente';
+                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
                             $allDocsOk = (
                                 $shipment['att_picking_status'] === 'closed' &&
                                 $shipment['att_certificate_status'] === 'closed' &&
@@ -306,7 +306,7 @@ foreach ($schedules as $schedule) {
                                 $shipment['att_other_status'] === 'closed'
                             );
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs OK' : 'Docs Pendentes';
+                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -339,7 +339,7 @@ foreach ($schedules as $schedule) {
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Aguardando']['shipments'] as $shipment): 
                             $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF OK' : 'NF Pendente';
+                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
                             $allDocsOk = (
                                 $shipment['att_picking_status'] === 'closed' &&
                                 $shipment['att_certificate_status'] === 'closed' &&
@@ -347,7 +347,7 @@ foreach ($schedules as $schedule) {
                                 $shipment['att_other_status'] === 'closed'
                             );
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs OK' : 'Docs Pendentes';
+                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -380,7 +380,7 @@ foreach ($schedules as $schedule) {
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Em operação']['shipments'] as $shipment): 
                             $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF OK' : 'NF Pendente';
+                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
                             $allDocsOk = (
                                 $shipment['att_picking_status'] === 'closed' &&
                                 $shipment['att_certificate_status'] === 'closed' &&
@@ -388,7 +388,7 @@ foreach ($schedules as $schedule) {
                                 $shipment['att_other_status'] === 'closed'
                             );
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs OK' : 'Docs Pendentes';
+                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -421,7 +421,7 @@ foreach ($schedules as $schedule) {
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Fim de operação']['shipments'] as $shipment): 
                             $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF OK' : 'NF Pendente';
+                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
                             $allDocsOk = (
                                 $shipment['att_picking_status'] === 'closed' &&
                                 $shipment['att_certificate_status'] === 'closed' &&
@@ -429,7 +429,7 @@ foreach ($schedules as $schedule) {
                                 $shipment['att_other_status'] === 'closed'
                             );
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs OK' : 'Docs Pendentes';
+                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
@@ -462,7 +462,7 @@ foreach ($schedules as $schedule) {
                     <div class="card-details-grid card-shipments-grid">
                         <?php foreach ($statusData['Liberado']['shipments'] as $shipment): 
                             $nfBadgeClass = ($shipment['att_invoice_status'] === 'closed') ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF OK' : 'NF Pendente';
+                            $nfBadgeText = ($shipment['att_invoice_status'] === 'closed') ? 'NF' : 'NF!';
                             $allDocsOk = (
                                 $shipment['att_picking_status'] === 'closed' &&
                                 $shipment['att_certificate_status'] === 'closed' &&
@@ -470,7 +470,7 @@ foreach ($schedules as $schedule) {
                                 $shipment['att_other_status'] === 'closed'
                             );
                             $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? 'Docs OK' : 'Docs Pendentes';
+                            $docsBadgeText = $allDocsOk ? 'Docs' : 'Docs!';
                         ?>
                             <div class="detail-item">
                                 <span class="detail-label">Shipment</span>
