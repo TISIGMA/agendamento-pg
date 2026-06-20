@@ -182,23 +182,7 @@ $schedules = $scheduleController->findByClientStatusStartDateAndEndDate($_SESSIO
 
                                             if(!$value['show']) continue;
 
-                                            if ($key === 'scaneado') {
-                                                $isScaneado = $schedule[$value['value']] === 'Sim';
-                                                echo '<td class="text-center">
-                                                        <a href="#" class="toggle-scaneado" data-id="' . $schedule["getId"] . '" data-status="' . ($isScaneado ? 'Não' : 'Sim') . '">
-                                                            <i class="fa ' . ($isScaneado ? 'fa-check-square-o text-success' : 'fa-square-o text-muted') . '" aria-hidden="true" style="font-size: 20px;"></i>
-                                                        </a>
-                                                      </td>';
-                                            } elseif ($key === 'carga_em_qualidade') {
-                                                $isCargaQualidade = $schedule[$value['value']] === 'Sim';
-                                                echo '<td class="text-center">
-                                                        <a href="#" class="toggle-carga-qualidade" data-id="' . $schedule["getId"] . '" data-status="' . ($isCargaQualidade ? 'Não' : 'Sim') . '">
-                                                            <i class="fa ' . ($isCargaQualidade ? 'fa-check-square-o text-success' : 'fa-square-o text-muted') . '" aria-hidden="true" style="font-size: 20px;"></i>
-                                                        </a>
-                                                      </td>';
-                                            } else {
-                                                echo '<td>'.$schedule[$value['value']].'</td>';
-                                            }
+                                            echo '<td>'.$schedule[$value['value']].'</td>';
                                         }
                                         
                                         echo '</tr>';
@@ -211,75 +195,6 @@ $schedules = $scheduleController->findByClientStatusStartDateAndEndDate($_SESSIO
             </div>
         </div>
     </div>
-<script>
-$(document).ready(function() {
-    // Toggle scaneado
-    $(document).on('click', '.toggle-scaneado', function(e) {
-        e.preventDefault();
-        var $link = $(this);
-        var id = $link.data('id');
-        var novoStatus = $link.data('status');
-        
-        $.ajax({
-            url: 'update-status.php',
-            method: 'POST',
-            data: {
-                id: id,
-                campo: 'scaneado',
-                valor: novoStatus
-            },
-            success: function(response) {
-                // Atualiza o ícone
-                if (novoStatus === 'Sim') {
-                    $link.find('i').removeClass('fa-square-o text-muted').addClass('fa-check-square-o text-success');
-                    $link.data('status', 'Não');
-                } else {
-                    $link.find('i').removeClass('fa-check-square-o text-success').addClass('fa-square-o text-muted');
-                    $link.data('status', 'Sim');
-                }
-                // Recarrega a página para atualizar o painel
-                location.reload();
-            },
-            error: function() {
-                alert('Erro ao atualizar status!');
-            }
-        });
-    });
-    
-    // Toggle carga em qualidade
-    $(document).on('click', '.toggle-carga-qualidade', function(e) {
-        e.preventDefault();
-        var $link = $(this);
-        var id = $link.data('id');
-        var novoStatus = $link.data('status');
-        
-        $.ajax({
-            url: 'update-status.php',
-            method: 'POST',
-            data: {
-                id: id,
-                campo: 'carga_em_qualidade',
-                valor: novoStatus
-            },
-            success: function(response) {
-                // Atualiza o ícone
-                if (novoStatus === 'Sim') {
-                    $link.find('i').removeClass('fa-square-o text-muted').addClass('fa-check-square-o text-success');
-                    $link.data('status', 'Não');
-                } else {
-                    $link.find('i').removeClass('fa-check-square-o text-success').addClass('fa-square-o text-muted');
-                    $link.data('status', 'Sim');
-                }
-                // Recarrega a página para atualizar o painel
-                location.reload();
-            },
-            error: function() {
-                alert('Erro ao atualizar status!');
-            }
-        });
-    });
-});
-</script>
 </body>
 <div class="modal fade" id="columnOrder" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered large-modal" role="document">

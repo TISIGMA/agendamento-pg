@@ -82,17 +82,15 @@ foreach ($schedules as $schedule) {
         $status = 'Agendado';
     }
     
-    $statusData[$status]['count']++;
-    
     // Collect individual shipment details
     $shipmentData = [
+        'id' => $schedule['getId'] ?? '',
         'shipment_id' => $schedule['getShipmentId'] ?? '',
         'operacao' => $schedule['getOperacao'] ?? '',
         'data_agendamento' => $schedule['getDataAgendamento'] ?? ''
     ];
-    $statusData[$status]['shipments'][] = $shipmentData;
     
-    // Check if carga is scaneada
+    // Check if carga is scaneada - se for, adiciona apenas ao card "Cargas Scaneadas"
     $scaneado = $schedule['getScaneado'] ?? 'Não';
     if ($scaneado === 'Sim' && $status === 'Agendado') {
         $scaneadas++;
@@ -120,7 +118,14 @@ foreach ($schedules as $schedule) {
         if ($transportadoraScaneada) {
             $statusData['Cargas Scaneadas']['transportadoras'][$transportadoraScaneada] = true;
         }
+        
+        // Pula para não adicionar ao card "Agendado"
+        continue;
     }
+    
+    // Se não for scaneada, adiciona ao card do status normal
+    $statusData[$status]['count']++;
+    $statusData[$status]['shipments'][] = $shipmentData;
     
     // Add carga
     $carga = $schedule['getCargaQtde'] ?? 0;
@@ -250,6 +255,11 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-label">Data</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
                             </div>
+                            <div class="detail-item">
+                                <button class="btn btn-xs btn-success mark-scaneado-btn" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="margin-top: 5px; cursor: pointer;">
+                                    Scan
+                                </button>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -257,7 +267,7 @@ foreach ($schedules as $schedule) {
                     <div class="schedule-box-status box-purple" onclick="navigateToSearch('Agendado')">
                         <div class="box-home-header">
                             <p>Cargas Scaneadas</p>
-                            <img src="../images/home-icons/done-truck.png"></img>
+                            <img src="../images/home-icons/scaneada.png"></img>
                             <p class="home-box-text"><?=$scaneadas ?></p>
                         </div>
                     </div>
@@ -274,6 +284,8 @@ foreach ($schedules as $schedule) {
                             <div class="detail-item">
                                 <span class="detail-label">Data</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -300,6 +312,8 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-label">Data</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
                             </div>
+                            <div class="detail-item">
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -324,6 +338,8 @@ foreach ($schedules as $schedule) {
                             <div class="detail-item">
                                 <span class="detail-label">Data</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
+                            </div>
+                            <div class="detail-item">
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -350,6 +366,8 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-label">Data</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
                             </div>
+                            <div class="detail-item">
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -375,6 +393,8 @@ foreach ($schedules as $schedule) {
                                 <span class="detail-label">Data</span>
                                 <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
                             </div>
+                            <div class="detail-item">
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -384,4 +404,36 @@ foreach ($schedules as $schedule) {
             </div>
         </div>
     </div>
+<script>
+$(document).ready(function() {
+    console.log('Document ready');
+    
+    $('.mark-scaneado-btn').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation(); // Evita que o clique no botão acione o clique no card
+        
+        var id = $(this).data('id');
+        console.log('Clicou no botão para ID:', id);
+        
+        $.ajax({
+            url: 'update-status.php',
+            method: 'POST',
+            data: {
+                id: id,
+                campo: 'scaneado',
+                valor: 'Sim'
+            },
+            success: function(response) {
+                console.log('Resposta do servidor:', response);
+                // Recarrega a página para atualizar os contadores dos cards
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error('Erro na requisição:', error);
+                alert('Erro ao marcar como scaneado!');
+            }
+        });
+    });
+});
+</script>
 </body>

@@ -584,10 +584,10 @@ td{
 
 .card-details-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
     background: #ffffff;
-    padding: 16px 12px;
+    padding: 12px 10px;
     border-radius: 18px;
     box-shadow:
         0 4px 12px rgba(0,0,0,0.06),
