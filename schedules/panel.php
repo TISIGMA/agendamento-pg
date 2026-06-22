@@ -254,46 +254,6 @@ foreach ($schedules as $schedule) {
                             <p class="home-box-text"><?=$scheduled ?></p>
                         </div>
                     </div>
-                    <div class="card-details-grid card-shipments-grid">
-                        <?php foreach ($statusData['Agendado']['shipments'] as $shipment): 
-                            // Verifica status da NF - verifica se tem anexo ou status closed
-                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
-                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
-                            
-                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
-                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
-                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
-                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
-                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
-                            
-                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
-                            $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
-                        ?>
-                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: pointer; padding: 8px 0;">
-                            <div class="detail-item">
-                                <span class="detail-label">Shipment</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Agd</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Cidade</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <div style="margin-top: 4px;">
-                                    <span class="status-badge <?=htmlspecialchars($nfBadgeClass) ?>"><?=htmlspecialchars($nfBadgeText) ?></span>
-                                    <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
                 </div>
                 <div class="card-wrapper">
                     <div class="schedule-box-status box-purple" onclick="navigateToSearch('Agendado')">
@@ -302,48 +262,6 @@ foreach ($schedules as $schedule) {
                             <img src="../images/home-icons/scaneada.png"></img>
                             <p class="home-box-text"><?=$scaneadas ?></p>
                         </div>
-                    </div>
-                    <div class="card-details-grid card-shipments-grid">
-                        <?php foreach ($statusData['Cargas Scaneadas']['shipments'] as $shipment): 
-                            // Verifica status da NF - verifica se tem anexo ou status closed
-                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
-                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
-                            
-                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
-                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
-                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
-                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
-                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
-                            
-                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
-                            $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
-                        ?>
-                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
-                            <div class="detail-item">
-                                <span class="detail-label">Shipment</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Agd</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Cidade</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <div style="margin-top: 4px;">
-                                    <span class="status-badge <?=htmlspecialchars($nfBadgeClass) ?>"><?=htmlspecialchars($nfBadgeText) ?></span>
-                                    <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
                     </div>
                 </div>
                 <div class="card-wrapper">
@@ -354,48 +272,6 @@ foreach ($schedules as $schedule) {
                             <p class="home-box-text"><?=$waiting ?></p>
                         </div>
                     </div>
-                    <div class="card-details-grid card-shipments-grid">
-                        <?php foreach ($statusData['Aguardando']['shipments'] as $shipment): 
-                            // Verifica status da NF - verifica se tem anexo ou status closed
-                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
-                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
-                            
-                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
-                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
-                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
-                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
-                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
-                            
-                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
-                            $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
-                        ?>
-                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
-                            <div class="detail-item">
-                                <span class="detail-label">Shipment</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Agd</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Cidade</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <div style="margin-top: 4px;">
-                                    <span class="status-badge <?=htmlspecialchars($nfBadgeClass) ?>"><?=htmlspecialchars($nfBadgeText) ?></span>
-                                    <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
                 </div>
                 <div class="card-wrapper">
                     <div class="schedule-box-status box-blue" onclick="navigateToSearch('Em operação')">
@@ -404,48 +280,6 @@ foreach ($schedules as $schedule) {
                             <img src="../images/home-icons/operation-truck.png"></img>
                             <p class="home-box-text"><?=$inOperation ?></p>
                         </div>
-                    </div>
-                    <div class="card-details-grid card-shipments-grid">
-                        <?php foreach ($statusData['Em operação']['shipments'] as $shipment): 
-                            // Verifica status da NF - verifica se tem anexo ou status closed
-                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
-                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
-                            
-                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
-                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
-                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
-                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
-                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
-                            
-                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
-                            $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
-                        ?>
-                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
-                            <div class="detail-item">
-                                <span class="detail-label">Shipment</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Agd</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Cidade</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <div style="margin-top: 4px;">
-                                    <span class="status-badge <?=htmlspecialchars($nfBadgeClass) ?>"><?=htmlspecialchars($nfBadgeText) ?></span>
-                                    <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
                     </div>
                 </div>
                 <div class="card-wrapper">
@@ -456,48 +290,6 @@ foreach ($schedules as $schedule) {
                             <p class="home-box-text"><?=$operationDone ?></p>
                         </div>
                     </div>
-                    <div class="card-details-grid card-shipments-grid">
-                        <?php foreach ($statusData['Fim de operação']['shipments'] as $shipment): 
-                            // Verifica status da NF - verifica se tem anexo ou status closed
-                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
-                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
-                            
-                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
-                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
-                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
-                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
-                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
-                            
-                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
-                            $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
-                        ?>
-                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
-                            <div class="detail-item">
-                                <span class="detail-label">Shipment</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Agd</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Cidade</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <div style="margin-top: 4px;">
-                                    <span class="status-badge <?=htmlspecialchars($nfBadgeClass) ?>"><?=htmlspecialchars($nfBadgeText) ?></span>
-                                    <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
                 </div>
                 <div class="card-wrapper">
                     <div class="schedule-box-status box-green" onclick="navigateToSearch('Liberado')">
@@ -506,48 +298,6 @@ foreach ($schedules as $schedule) {
                             <img src="../images/home-icons/done-truck.png"></img>
                             <p class="home-box-text"><?=$done ?></p>
                         </div>
-                    </div>
-                    <div class="card-details-grid card-shipments-grid">
-                        <?php foreach ($statusData['Liberado']['shipments'] as $shipment): 
-                            // Verifica status da NF - verifica se tem anexo ou status closed
-                            $nfOk = ($shipment['has_invoice'] === true) || ($shipment['att_invoice_status'] === 'closed');
-                            $nfBadgeClass = $nfOk ? 'badge-green' : 'badge-red';
-                            $nfBadgeText = $nfOk ? '✓ NF' : 'NF!';
-                            
-                            // Verifica status dos outros documentos - verifica se tem anexo ou status closed
-                            $pickingOk = ($shipment['has_picking'] === true) || ($shipment['att_picking_status'] === 'closed');
-                            $certificateOk = ($shipment['has_certificate'] === true) || ($shipment['att_certificate_status'] === 'closed');
-                            $boardingOk = ($shipment['has_boarding'] === true) || ($shipment['att_boarding_status'] === 'closed');
-                            $otherOk = ($shipment['has_other'] === true) || ($shipment['att_other_status'] === 'closed');
-                            
-                            $allDocsOk = $pickingOk && $certificateOk && $boardingOk && $otherOk;
-                            $docsBadgeClass = $allDocsOk ? 'badge-green' : 'badge-yellow';
-                            $docsBadgeText = $allDocsOk ? '✓ Docs' : 'Docs!';
-                        ?>
-                        <div class="shipment-item" data-id="<?=htmlspecialchars($shipment['id']) ?>" style="cursor: default; padding: 8px 0;">
-                            <div class="detail-item">
-                                <span class="detail-label">Shipment</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['shipment_id'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Agd</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['data_agendamento'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Cidade</span>
-                                <span class="detail-value"><?=htmlspecialchars($shipment['cidade'] ?: '-') ?></span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Status</span>
-                                <div style="margin-top: 4px;">
-                                    <span class="status-badge <?=htmlspecialchars($nfBadgeClass) ?>"><?=htmlspecialchars($nfBadgeText) ?></span>
-                                    <span class="status-badge <?=htmlspecialchars($docsBadgeClass) ?>" style="margin-left: 4px;"><?=htmlspecialchars($docsBadgeText) ?></span>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -559,38 +309,6 @@ foreach ($schedules as $schedule) {
 <script>
 $(document).ready(function() {
     console.log('Document ready');
-    
-    $('.shipment-item').on('click', function(e) {
-        e.preventDefault();
-        
-        var id = $(this).data('id');
-        var isClicable = $(this).css('cursor') === 'pointer';
-        
-        if (!isClicable) {
-            return;
-        }
-        
-        console.log('Clicou no item para ID:', id);
-        
-        $.ajax({
-            url: 'update-status.php',
-            method: 'POST',
-            data: {
-                id: id,
-                campo: 'scaneado',
-                valor: 'Sim'
-            },
-            success: function(response) {
-                console.log('Resposta do servidor:', response);
-                // Recarrega a página para atualizar os contadores dos cards
-                location.reload();
-            },
-            error: function(xhr, status, error) {
-                console.error('Erro na requisição:', error);
-                alert('Erro ao marcar como scaneado!');
-            }
-        });
-    });
 });
 </script>
 </body>
