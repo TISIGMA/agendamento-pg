@@ -8,7 +8,7 @@ if (!file_exists($autoloadPath)) {
 }
 require_once $autoloadPath;
 
-$isProduction = true;
+$isProduction = false;
 
 $productionConn = array(
     'servidor' => '10.15.1.120',
@@ -22,7 +22,7 @@ $homolConn = array(
     'servidor' => '10.15.1.120',
     'usuario'  => 'app_user',
     'senha'    => '6VSh6Q3Y9SNZ',
-    'banco'    => 'labsoft_teste',
+    'banco'    => 'labsoft_novo',
     'porta'    => 3306
 );
 
