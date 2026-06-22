@@ -337,6 +337,13 @@ foreach ($schedules as $schedule) {
                                 </thead>
                                 <tbody>
                                     <?php foreach ($schedules as $schedule): ?>
+                                        <?php 
+                                        // Filtra para não mostrar itens com status "Fim de operação" ou "Liberado" no quadro
+                                        $status = $schedule['getStatus'];
+                                        if ($status == 'Fim de operação' || $status == 'Liberado') {
+                                            continue;
+                                        }
+                                        ?>
                                         <tr>
                                             <td><?php echo strtoupper($schedule['getShipmentId']); ?></td>
                                             <td><?php echo strtoupper($schedule['getCidade']); ?></td>
