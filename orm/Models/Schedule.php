@@ -52,5 +52,6 @@ class Schedule extends Model
         'scaneado',
         'carga_em_qualidade',
         'carregando_ou_rejeitado',
+        'documentos',
     ];
 }

@@ -343,6 +343,7 @@ class ScheduleController{
         $schedule->setScaneado(isset($post['scaneado']) ? $post['scaneado'] : 'Não');
         $schedule->setCargaEmQualidade(isset($post['carga_em_qualidade']) ? $post['carga_em_qualidade'] : 'Não');
         $schedule->setCarregandoOuRejeitado(isset($post['carregando_ou_rejeitado']) ? $post['carregando_ou_rejeitado'] : '');
+        $schedule->setDocumentos(isset($post['documentos']) ? $post['documentos'] : 'aguardando');
 
         return $schedule;
     }
@@ -409,6 +410,7 @@ class ScheduleController{
             $schedule['getScaneado'] = $this->getRecordValue($data, 'scaneado');
             $schedule['getCargaEmQualidade'] = $this->getRecordValue($data, 'carga_em_qualidade');
             $schedule['getCarregandoOuRejeitado'] = $this->getRecordValue($data, 'carregando_ou_rejeitado');
+            $schedule['getDocumentos'] = $this->getRecordValue($data, 'documentos');
 
             array_push($schedules, $schedule);
         }
@@ -477,6 +479,7 @@ class ScheduleController{
             $schedule->setScaneado($this->getRecordValue($data, 'scaneado'));
             $schedule->setCargaEmQualidade($this->getRecordValue($data, 'carga_em_qualidade'));
             $schedule->setCarregandoOuRejeitado($this->getRecordValue($data, 'carregando_ou_rejeitado'));
+            $schedule->setDocumentos($this->getRecordValue($data, 'documentos'));
 
             $schedule->setAttPickingStatus($this->getRecordValue($data, 'attatchment_picking_status'));
             $schedule->setAttInvoiceStatus($this->getRecordValue($data, 'attatchment_invoice_status'));
