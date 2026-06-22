@@ -344,7 +344,7 @@ foreach ($schedules as $schedule) {
                                             continue;
                                         }
                                         ?>
-                                        <tr>
+                                        <tr style="cursor: pointer;" onclick="window.location.href='index.php?customer=<?=$_SESSION['customerName']?>&conteudo=newSchedule.php&search=<?=$schedule['getId']?>'">
                                             <td><?php echo strtoupper($schedule['getShipmentId']); ?></td>
                                             <td><?php echo strtoupper($schedule['getCidade']); ?></td>
                                             <td><?php echo strtoupper($schedule['getDataAgendamento']); ?></td>
