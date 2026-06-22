@@ -409,15 +409,34 @@ function toggleView() {
         quadroView.style.display = 'block';
         cardsView.style.display = 'none';
         btn.textContent = 'CARDS';
+        localStorage.setItem('agendamentoView', 'quadro');
     } else {
         quadroView.style.display = 'none';
         cardsView.style.display = 'block';
         btn.textContent = 'QUADRO';
+        localStorage.setItem('agendamentoView', 'cards');
     }
 }
 
 $(document).ready(function() {
     console.log('Document ready');
     progressTimer(); // Inicia o timer quando o documento estiver pronto
+    
+    // Restaura a visualização salva
+    var savedView = localStorage.getItem('agendamentoView');
+    var cardsView = document.getElementById('cards-view');
+    var quadroView = document.getElementById('quadro-view');
+    var btn = document.getElementById('toggle-btn');
+    
+    if (savedView === 'quadro') {
+        quadroView.style.display = 'block';
+        cardsView.style.display = 'none';
+        btn.textContent = 'CARDS';
+    } else {
+        // Padrão é cards
+        quadroView.style.display = 'none';
+        cardsView.style.display = 'block';
+        btn.textContent = 'QUADRO';
+    }
 });
 </script>
