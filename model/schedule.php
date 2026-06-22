@@ -46,6 +46,7 @@ class Schedule{
     private $attOtherStatus;
     private $scaneado;
     private $carga_em_qualidade;
+    private $carregando_ou_rejeitado;
 
 
     public function setId($id){
@@ -327,6 +328,13 @@ class Schedule{
     
     public function getCargaEmQualidade(){
         return $this->carga_em_qualidade;
+    }
+    public function setCarregandoOuRejeitado($carregando_ou_rejeitado){
+        $this->carregando_ou_rejeitado = $carregando_ou_rejeitado;
+    }
+    
+    public function getCarregandoOuRejeitado(){
+        return $this->carregando_ou_rejeitado;
     }
 }
 

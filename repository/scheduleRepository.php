@@ -22,7 +22,7 @@ class ScheduleRepository{
                     ->toArray();
             }
 
-            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status
+            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status,scaneado,carga_em_qualidade,carregando_ou_rejeitado
                     FROM janela";  
 
             $result = $this->mySql->query($sql);
@@ -46,7 +46,7 @@ class ScheduleRepository{
                     ->toArray();
             }
 
-            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status
+            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status,scaneado,carga_em_qualidade,carregando_ou_rejeitado
                     FROM janela
                     WHERE cliente = '".$client."'
                     ORDER BY data_agendamento";  
@@ -72,7 +72,7 @@ class ScheduleRepository{
                     ->toArray();
             }
 
-            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status
+            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status,scaneado,carga_em_qualidade,carregando_ou_rejeitado
                     FROM janela
                     WHERE cliente = '".$client."'
                     AND data_agendamento >= '".$startDate."'
@@ -101,7 +101,7 @@ class ScheduleRepository{
                     ->toArray();
             }
 
-            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status
+            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status,scaneado,carga_em_qualidade,carregando_ou_rejeitado
                     FROM janela
                     WHERE cliente = '".$client."'
                     AND status = '".$status."' 
@@ -128,7 +128,7 @@ class ScheduleRepository{
                     ->toArray();
             }
 
-            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status
+            $sql = "SELECT id,data_agendamento,transportadora,status,tipoVeiculo,placa_cavalo,operacao,nf,horaChegada,inicio_operacao,fim_operacao,usuario,dataInclusao,peso,saida,separacao,shipment_id,do_s,cidade,carga_qtde,observacao,dados_gerais,cliente,doca, nome_motorista, placa_carreta2, documento_motorista, placa_carreta, operation_type_id,operator,checker,last_modified_by,last_modified_date,attatchment_picking_status,attatchment_invoice_status,attatchment_certificate_status,attatchment_boarding_status,attatchment_other_status,scaneado,carga_em_qualidade,carregando_ou_rejeitado
                     FROM janela
                     WHERE id = '".$id."'";  
 
@@ -200,10 +200,11 @@ class ScheduleRepository{
                 $data['attatchment_boarding_status'] = $schedule->getAttBoardingStatus();
                 $data['attatchment_other_status'] = $schedule->getAttOtherStatus();
                 $data['checker'] = $schedule->getChecker();
-        $data['scaneado'] = $schedule->getScaneado();
-        $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
+                $data['scaneado'] = $schedule->getScaneado();
+                $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
+                $data['carregando_ou_rejeitado'] = $schedule->getCarregandoOuRejeitado();
 
-        $id = Capsule::table('janela')->insertGetId($data);
+                $id = Capsule::table('janela')->insertGetId($data);
                 return $id;
             }
 
@@ -247,7 +248,8 @@ class ScheduleRepository{
 
             $sql .= "checker = '".$schedule->getChecker()."', ";
                 $sql .= "scaneado = '".$schedule->getScaneado()."', ";
-                $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."'";
+                $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."', ";
+                $sql .= "carregando_ou_rejeitado = '".$schedule->getCarregandoOuRejeitado()."'";
 
                 $result = $this->mySql->query($sql);
 
@@ -330,8 +332,9 @@ class ScheduleRepository{
                 $data['attatchment_boarding_status'] = $schedule->getAttBoardingStatus();
                 $data['attatchment_other_status'] = $schedule->getAttOtherStatus();
                 $data['checker'] = $schedule->getChecker();
-        $data['scaneado'] = $schedule->getScaneado();
-        $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
+                $data['scaneado'] = $schedule->getScaneado();
+                $data['carga_em_qualidade'] = $schedule->getCargaEmQualidade();
+                $data['carregando_ou_rejeitado'] = $schedule->getCarregandoOuRejeitado();
 
         Capsule::table('janela')
             ->where('id', (int) $id)
@@ -380,7 +383,8 @@ class ScheduleRepository{
 
             $sql .= "checker = '".$schedule->getChecker()."', ";
                 $sql .= "scaneado = '".$schedule->getScaneado()."', ";
-                $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."'";
+                $sql .= "carga_em_qualidade = '".$schedule->getCargaEmQualidade()."', ";
+                $sql .= "carregando_ou_rejeitado = '".$schedule->getCarregandoOuRejeitado()."'";
                 $sql .= " WHERE ID = ".$id;  
 
             $result = $this->mySql->query($sql);
@@ -499,6 +503,7 @@ class ScheduleRepository{
         'attatchment_other_status',
         'scaneado',
         'carga_em_qualidade',
+        'carregando_ou_rejeitado',
     ];
     }
 }

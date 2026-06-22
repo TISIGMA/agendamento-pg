@@ -342,6 +342,7 @@ class ScheduleController{
         $schedule->setAttOtherStatus($post['other-status']);
         $schedule->setScaneado(isset($post['scaneado']) ? $post['scaneado'] : 'Não');
         $schedule->setCargaEmQualidade(isset($post['carga_em_qualidade']) ? $post['carga_em_qualidade'] : 'Não');
+        $schedule->setCarregandoOuRejeitado(isset($post['carregando_ou_rejeitado']) ? $post['carregando_ou_rejeitado'] : '');
 
         return $schedule;
     }
@@ -407,6 +408,7 @@ class ScheduleController{
             $schedule['getLastModifiedDate'] = $this->formatDateTime($this->getRecordValue($data, 'last_modified_date'));
             $schedule['getScaneado'] = $this->getRecordValue($data, 'scaneado');
             $schedule['getCargaEmQualidade'] = $this->getRecordValue($data, 'carga_em_qualidade');
+            $schedule['getCarregandoOuRejeitado'] = $this->getRecordValue($data, 'carregando_ou_rejeitado');
 
             array_push($schedules, $schedule);
         }
@@ -474,6 +476,7 @@ class ScheduleController{
             $schedule->setLastModifiedDate($this->formatDateTime($this->getRecordValue($data, 'last_modified_date')));
             $schedule->setScaneado($this->getRecordValue($data, 'scaneado'));
             $schedule->setCargaEmQualidade($this->getRecordValue($data, 'carga_em_qualidade'));
+            $schedule->setCarregandoOuRejeitado($this->getRecordValue($data, 'carregando_ou_rejeitado'));
 
             $schedule->setAttPickingStatus($this->getRecordValue($data, 'attatchment_picking_status'));
             $schedule->setAttInvoiceStatus($this->getRecordValue($data, 'attatchment_invoice_status'));

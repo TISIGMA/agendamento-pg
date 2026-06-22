@@ -51,5 +51,6 @@ class Schedule extends Model
         'attatchment_other_status',
         'scaneado',
         'carga_em_qualidade',
+        'carregando_ou_rejeitado',
     ];
 }

@@ -481,6 +481,14 @@ $statusFieldColor = ($schedule->getStatus() == 'Liberado') ? 'success-text-field
                                     <option value="Sim" <?=$schedule->getCargaEmQualidade() == 'Sim' ? 'selected' : '' ?>>Sim</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label>Carregando ou rejeitado</label>
+                                <select name="carregando_ou_rejeitado" class="form-control" <?=$readonly ?> id="carregando_ou_rejeitado">
+                                    <option value="">Selecione...</option>
+                                    <option value="Carregando" <?=$schedule->getCarregandoOuRejeitado() == 'Carregando' ? 'selected' : '' ?>>Carregando</option>
+                                    <option value="Rejeitado" <?=$schedule->getCarregandoOuRejeitado() == 'Rejeitado' ? 'selected' : '' ?>>Rejeitado</option>
+                                </select>
+                            </div>
                         </div> 
                     </div>
                     <div class="row" <?=$sectionAccess ?>>
