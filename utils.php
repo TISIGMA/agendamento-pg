@@ -23,7 +23,7 @@
         </button>
       </div>';
     }
-
+#teste
     function notification($type, $msg){
       echo '<div class="alert '.$type.' alert-dismissible fade show" role="alert">
       '.$msg.'<button type="button" class="close" data-dismiss="alert" aria-label="Close">

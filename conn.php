@@ -12,14 +12,14 @@ $isProduction = false;
 
 $productionConn = array(
     'servidor' => '10.15.1.120',
-    'usuario'  => 'root',
-    'senha'    => 'iRoE0IGyNBd0HKEEEKe3f34tgT2',
+    'usuario'  => 'app_user',
+    'senha'    => '6VSh6Q3Y9SNZ',
     'banco'    => 'labsoftt_sigma',
     'porta'    => 3306
 );
 
 $homolConn = array(
-    'servidor' => '186.250.92.46',
+    'servidor' => '10.15.1.120',
     'usuario'  => 'app_user',
     'senha'    => '6VSh6Q3Y9SNZ',
     'banco'    => 'labsoft_teste',
