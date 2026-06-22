@@ -96,11 +96,20 @@ foreach ($schedules as $schedule) {
                 'att_other_status' => $schedule['getAttOtherStatus'] ?? 'open',
                 'scaneado' => $schedule['getScaneado'] ?? 'Não',
                 'carga_em_qualidade' => $schedule['getCargaEmQualidade'] ?? 'Não',
+                'carregando_ou_rejeitado' => $schedule['getCarregandoOuRejeitado'] ?? '',
+                'documentos' => $schedule['getDocumentos'] ?? 'aguardando',
                 'has_invoice' => $schedule['has_invoice'] ?? false,
                 'has_picking' => $schedule['has_picking'] ?? false,
                 'has_certificate' => $schedule['has_certificate'] ?? false,
                 'has_boarding' => $schedule['has_boarding'] ?? false,
-                'has_other' => $schedule['has_other'] ?? false
+                'has_other' => $schedule['has_other'] ?? false,
+                'status' => $schedule['getStatus'] ?? '',
+                'nf' => $schedule['getNf'] ?? '',
+                'hora_chegada' => $schedule['getHoraChegada'] ?? '',
+                'data_inicio_operacao' => $schedule['getInicioOperacao'] ?? '',
+                'data_fim_operacao' => $schedule['getFimOperacao'] ?? '',
+                'saida' => $schedule['getSaida'] ?? '',
+                'tempo_espera' => ''
             ];
     
     // Check if carga is scaneada - se for, adiciona apenas ao card "Cargas Scaneadas"
@@ -238,6 +247,9 @@ foreach ($schedules as $schedule) {
         <div class="col-lg-12">
             <div class="panel-title">
                 <h1 class="display-2">Agendamentos</h1>
+                <div style="margin-left: auto;">
+                    <button id="toggleViewBtn" class="btn btn-primary" onclick="toggleView()">Quadro</button>
+                </div>
             </div>
             <div class="label-terminal-panel">
                 <div>
@@ -245,61 +257,134 @@ foreach ($schedules as $schedule) {
                     
                 </div>
             </div>
-            <div class="panel-home">
-                <div class="card-wrapper">
-                    <div class="schedule-box-status box-gray" onclick="navigateToSearch('Agendado')">
-                        <div class="box-home-header">
-                            <p>Agendados</p>
-                            <img src="../images/home-icons/schedule-truck.png"></img>
-                            <p class="home-box-text"><?=$scheduled ?></p>
+            <div id="cardView">
+                <div class="panel-home">
+                    <div class="card-wrapper">
+                        <div class="schedule-box-status box-gray" onclick="navigateToSearch('Agendado')">
+                            <div class="box-home-header">
+                                <p>Agendados</p>
+                                <img src="../images/home-icons/schedule-truck.png"></img>
+                                <p class="home-box-text"><?=$scheduled ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-wrapper">
+                        <div class="schedule-box-status box-purple" onclick="navigateToSearch('Agendado')">
+                            <div class="box-home-header">
+                                <p>Cargas Scaneadas</p>
+                                <img src="../images/home-icons/scaneada.png"></img>
+                                <p class="home-box-text"><?=$scaneadas ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-wrapper">
+                        <div class="schedule-box-status box-orange" onclick="navigateToSearch('Aguardando')">
+                            <div class="box-home-header">
+                                <p>Aguardando</p>
+                                <img src="../images/home-icons/empty-truck.png"></img>
+                                <p class="home-box-text"><?=$waiting ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-wrapper">
+                        <div class="schedule-box-status box-blue" onclick="navigateToSearch('Em operação')">
+                            <div class="box-home-header">
+                                <p>Em operação</p>
+                                <img src="../images/home-icons/operation-truck.png"></img>
+                                <p class="home-box-text"><?=$inOperation ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-wrapper">
+                        <div class="schedule-box-status box-yellow" onclick="navigateToSearch('Fim de operação')">
+                            <div class="box-home-header">
+                                <p>Fim de operação</p>
+                                <img src="../images/home-icons/full-truck.png"></img>
+                                <p class="home-box-text"><?=$operationDone ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-wrapper">
+                        <div class="schedule-box-status box-green" onclick="navigateToSearch('Liberado')">
+                            <div class="box-home-header">
+                                <p>Liberados</p>
+                                <img src="../images/home-icons/done-truck.png"></img>
+                                <p class="home-box-text"><?=$done ?></p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-wrapper">
-                    <div class="schedule-box-status box-purple" onclick="navigateToSearch('Agendado')">
-                        <div class="box-home-header">
-                            <p>Cargas Scaneadas</p>
-                            <img src="../images/home-icons/scaneada.png"></img>
-                            <p class="home-box-text"><?=$scaneadas ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-wrapper">
-                    <div class="schedule-box-status box-orange" onclick="navigateToSearch('Aguardando')">
-                        <div class="box-home-header">
-                            <p>Aguardando</p>
-                            <img src="../images/home-icons/empty-truck.png"></img>
-                            <p class="home-box-text"><?=$waiting ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-wrapper">
-                    <div class="schedule-box-status box-blue" onclick="navigateToSearch('Em operação')">
-                        <div class="box-home-header">
-                            <p>Em operação</p>
-                            <img src="../images/home-icons/operation-truck.png"></img>
-                            <p class="home-box-text"><?=$inOperation ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-wrapper">
-                    <div class="schedule-box-status box-yellow" onclick="navigateToSearch('Fim de operação')">
-                        <div class="box-home-header">
-                            <p>Fim de operação</p>
-                            <img src="../images/home-icons/full-truck.png"></img>
-                            <p class="home-box-text"><?=$operationDone ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-wrapper">
-                    <div class="schedule-box-status box-green" onclick="navigateToSearch('Liberado')">
-                        <div class="box-home-header">
-                            <p>Liberados</p>
-                            <img src="../images/home-icons/done-truck.png"></img>
-                            <p class="home-box-text"><?=$done ?></p>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div id="tableView" style="display: none;">
+                <table class="table table-striped table-bordered" style="margin-top: 20px;">
+                    <thead style="background-color: #337ab7; color: white;">
+                        <tr>
+                            <th>Carregamento BS</th>
+                            <th>Destino</th>
+                            <th>Janela</th>
+                            <th>Lançamento de carga?</th>
+                            <th>Carga escaneada?</th>
+                            <th>Chegada de veículo (Faturar)</th>
+                            <th>NF no site?</th>
+                            <th>Carregando ou rejeitado?</th>
+                            <th>Documentos ok ou aguardando?</th>
+                            <th>Tempo de espera</th>
+                            <th>Saída</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        // Collect all shipments for the table
+                        $allShipments = [];
+                        foreach ($statusData as $status => $data) {
+                            if (isset($data['shipments'])) {
+                                $allShipments = array_merge($allShipments, $data['shipments']);
+                            }
+                        }
+                        foreach ($allShipments as $shipment): 
+                            // Determine colors for cells
+                            $lancamentoCargaBg = ($shipment['carga_em_qualidade'] === 'Sim') ? '#52d772' : '#e74c3c';
+                            $cargaEscaneadaBg = ($shipment['scaneado'] === 'Sim') ? '#52d772' : '#e74c3c';
+                            $chegadaVeiculoBg = 'yellow'; // Based on status?
+                            $nfNoSiteBg = ($shipment['has_invoice'] || $shipment['att_invoice_status'] === 'closed') ? '#52d772' : '#e74c3c';
+                            $carregandoBg = ($shipment['carregando_ou_rejeitado'] === 'CARREGANDO') ? '#52d772' : 
+                                             ($shipment['carregando_ou_rejeitado'] === 'REJEITADO') ? '#e74c3c' : 'white';
+                            $documentosBg = ($shipment['documentos'] === 'ok') ? '#52d772' : '#e74c3c';
+                            $tempoEsperaBg = 'red'; // Default
+                            $saidaBg = 'green';
+                        ?>
+                        <tr>
+                            <td><?=htmlspecialchars($shipment['shipment_id'] ?? '') ?></td>
+                            <td><?=htmlspecialchars($shipment['cidade'] ?? '') ?></td>
+                            <td><?=htmlspecialchars($shipment['data_agendamento'] ?? '') ?></td>
+                            <td style="background-color: <?=$lancamentoCargaBg ?>; color: white; font-weight: bold; text-align: center;">
+                                <?=htmlspecialchars($shipment['carga_em_qualidade'] ?? 'Não') ?>
+                            </td>
+                            <td style="background-color: <?=$cargaEscaneadaBg ?>; color: white; font-weight: bold; text-align: center;">
+                                <?=htmlspecialchars($shipment['scaneado'] ?? 'Não') ?>
+                            </td>
+                            <td style="background-color: <?=$chegadaVeiculoBg ?>; color: black; font-weight: bold; text-align: center;">
+                                FATURAR
+                            </td>
+                            <td style="background-color: <?=$nfNoSiteBg ?>; color: white; font-weight: bold; text-align: center;">
+                                <?=($shipment['has_invoice'] || $shipment['att_invoice_status'] === 'closed') ? 'SIM' : 'NÃO' ?>
+                            </td>
+                            <td style="background-color: <?=$carregandoBg ?>; color: <?=$carregandoBg === 'white' ? 'black' : 'white' ?>; font-weight: bold; text-align: center;">
+                                <?=htmlspecialchars($shipment['carregando_ou_rejeitado'] ?? '') ?>
+                            </td>
+                            <td style="background-color: <?=$documentosBg ?>; color: white; font-weight: bold; text-align: center;">
+                                <?=htmlspecialchars(strtoupper($shipment['documentos'] ?? 'aguardando')) ?>
+                            </td>
+                            <td style="background-color: <?=$tempoEsperaBg ?>; color: white; font-weight: bold; text-align: center;">
+                                <?=htmlspecialchars($shipment['tempo_espera'] ?? '') ?>
+                            </td>
+                            <td style="background-color: <?=$saidaBg ?>; color: white; font-weight: bold; text-align: center;">
+                                <?=htmlspecialchars($shipment['saida'] ?? '') ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
             <div class="panel-progress">
                 <progress id="panel-progress" value="60000" max="60000"></progress>
@@ -310,5 +395,21 @@ foreach ($schedules as $schedule) {
 $(document).ready(function() {
     console.log('Document ready');
 });
+
+function toggleView() {
+    const cardView = document.getElementById('cardView');
+    const tableView = document.getElementById('tableView');
+    const toggleBtn = document.getElementById('toggleViewBtn');
+    
+    if (cardView.style.display !== 'none') {
+        cardView.style.display = 'none';
+        tableView.style.display = 'block';
+        toggleBtn.textContent = 'Cards';
+    } else {
+        cardView.style.display = 'block';
+        tableView.style.display = 'none';
+        toggleBtn.textContent = 'Quadro';
+    }
+}
 </script>
 </body>
