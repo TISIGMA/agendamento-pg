@@ -467,34 +467,51 @@ $statusFieldColor = ($schedule->getStatus() == 'Liberado') ? 'success-text-field
                                 <label>Observação</label>
                                 <textarea class="form-control" type="text"  name="observation" maxlength="149" <?=$readonly ?> <?=$fieldAcces['observation'] ?> id="observation" required><?=$schedule->getObservacao() ?></textarea>
                             </div>
-                            <div class="form-group">
-                                <label>Scaneado</label>
-                                <select name="scaneado" class="form-control" <?=$readonly ?> id="scaneado">
-                                    <option value="Não" <?=$schedule->getScaneado() == 'Não' ? 'selected' : '' ?>>Não</option>
-                                    <option value="Sim" <?=$schedule->getScaneado() == 'Sim' ? 'selected' : '' ?>>Sim</option>
-                                </select>
+                            
+                            <!-- Separator -->
+                            <hr style="margin: 20px 0; border-color: #ddd;">
+                            
+                            <!-- Fields in 2x2 grid -->
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Scaneado</label>
+                                        <select name="scaneado" class="form-control" <?=$readonly ?> id="scaneado">
+                                            <option value="Não" <?=$schedule->getScaneado() == 'Não' ? 'selected' : '' ?>>Não</option>
+                                            <option value="Sim" <?=$schedule->getScaneado() == 'Sim' ? 'selected' : '' ?>>Sim</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Carga em Qualidade</label>
+                                        <select name="carga_em_qualidade" class="form-control" <?=$readonly ?> id="carga_em_qualidade">
+                                            <option value="Não" <?=$schedule->getCargaEmQualidade() == 'Não' ? 'selected' : '' ?>>Não</option>
+                                            <option value="Sim" <?=$schedule->getCargaEmQualidade() == 'Sim' ? 'selected' : '' ?>>Sim</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Carga em Qualidade</label>
-                                <select name="carga_em_qualidade" class="form-control" <?=$readonly ?> id="carga_em_qualidade">
-                                    <option value="Não" <?=$schedule->getCargaEmQualidade() == 'Não' ? 'selected' : '' ?>>Não</option>
-                                    <option value="Sim" <?=$schedule->getCargaEmQualidade() == 'Sim' ? 'selected' : '' ?>>Sim</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Carregando ou rejeitado</label>
-                                <select name="carregando_ou_rejeitado" class="form-control" <?=$readonly ?> id="carregando_ou_rejeitado">
-                                    <option value="">Selecione...</option>
-                                    <option value="Carregando" <?=$schedule->getCarregandoOuRejeitado() == 'Carregando' ? 'selected' : '' ?>>Carregando</option>
-                                    <option value="Rejeitado" <?=$schedule->getCarregandoOuRejeitado() == 'Rejeitado' ? 'selected' : '' ?>>Rejeitado</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Documentos</label>
-                                <select name="documentos" class="form-control" <?=$readonly ?> id="documentos">
-                                    <option value="aguardando" <?=$schedule->getDocumentos() == 'aguardando' ? 'selected' : '' ?>>Aguardando</option>
-                                    <option value="ok" <?=$schedule->getDocumentos() == 'ok' ? 'selected' : '' ?>>Ok</option>
-                                </select>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Carregando ou rejeitado</label>
+                                        <select name="carregando_ou_rejeitado" class="form-control" <?=$readonly ?> id="carregando_ou_rejeitado">
+                                            <option value="">Selecione...</option>
+                                            <option value="Carregando" <?=$schedule->getCarregandoOuRejeitado() == 'Carregando' ? 'selected' : '' ?>>Carregando</option>
+                                            <option value="Rejeitado" <?=$schedule->getCarregandoOuRejeitado() == 'Rejeitado' ? 'selected' : '' ?>>Rejeitado</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Documentos</label>
+                                        <select name="documentos" class="form-control" <?=$readonly ?> id="documentos">
+                                            <option value="aguardando" <?=$schedule->getDocumentos() == 'aguardando' ? 'selected' : '' ?>>Aguardando</option>
+                                            <option value="ok" <?=$schedule->getDocumentos() == 'ok' ? 'selected' : '' ?>>Ok</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div> 
                     </div>
