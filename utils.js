@@ -665,12 +665,22 @@ const HandleChangeAutomatedTimeSwitch = () => {
 const progressTimer = () => {
 
     let time = PROGRESS_TIME;
+    const progressQuadro = document.getElementById('panel-progress');
+    const progressCards = document.getElementById('panel-progress-cards');
+    
+    console.log('progressQuadro:', progressQuadro);
+    console.log('progressCards:', progressCards);
+    
+    if (progressQuadro) progressQuadro.value = time;
+    if (progressCards) progressCards.value = time;
+    
     idInterval = setInterval(() => {
 
         if(!automatedTimeIsOn) clearInterval(idInterval);
 
         time = time - 10;
-        document.getElementById('panel-progress').value = time;
+        if (progressQuadro) progressQuadro.value = time;
+        if (progressCards) progressCards.value = time;
 
         if(time === 0) document.getElementById('panel-form').submit();
     }, 10);

@@ -4,7 +4,24 @@ require_once('../controller/scheduleController.php');
 require_once('../utils.php');
 
 date_default_timezone_set("America/Sao_Paulo");
+$fieldsAccess = ($_SESSION['tipo'] != 'client') ? true : false;
 
+$columns = [
+    'status'               => ['name' => 'status',                'label'=> 'Status',         'order' => 0,  'value' => 'getStatus',             'columnSize'=> 'td-100', 'show' => true],
+    'operationScheduleTime'=> ['name' => 'operationScheduleTime', 'label'=> 'Agendamento',    'order' => 1,  'value' => 'getDataAgendamento',    'columnSize'=> 'td-150', 'show' => true],
+    'arrival'              => ['name' => 'arrival',               'label'=> 'Chegada',        'order' => 2,  'value' => 'getHoraChegada',        'columnSize'=> 'td-150', 'show' => true],
+    'operationStart'       => ['name' => 'operationStart',        'label'=> 'Início',         'order' => 3,  'value' => 'getInicioOperacao',     'columnSize'=> 'td-150', 'show' => true],
+    'operationDone'        => ['name' => 'operationDone',         'label'=> 'Fim',            'order' => 4,  'value' => 'getFimOperacao',        'columnSize'=> 'td-150', 'show' => true],
+    'operationExit'        => ['name' => 'operationExit',         'label'=> 'Saída',          'order' => 5,  'value' => 'getSaida',              'columnSize'=> 'td-150', 'show' => true],
+    'operationType'        => ['name' => 'operationType',         'label'=> 'Operação',       'order' => 6,  'value' => 'getOperacao',           'columnSize'=> 'td-100', 'show' => true],
+    'shippingCompany'      => ['name' => 'shippingCompany',       'label'=> 'Transportadora', 'order' => 7,  'value' => 'getTransportadora',     'columnSize'=> 'td-150', 'show' => true],
+    'city'                 => ['name' => 'city',                  'label'=> 'Cidade',         'order' => 8,  'value' => 'getCidade',             'columnSize'=> 'td-100', 'show' => true],
+    'driverName'           => ['name' => 'driverName',            'label'=> 'Nome Motorista', 'order' => 10, 'value' => 'getNomeMotorista',      'columnSize'=> 'td-150', 'show' => true],
+    'licenceTruck'         => ['name' => 'licenceTruck',          'label'=> 'Placa Cavalo',   'order' => 11, 'value' => 'getPlacaCavalo',        'columnSize'=> 'td-120', 'show' => true],
+    'dock'                 => ['name' => 'dock',                  'label'=> 'Doca',           'order' => 16, 'value' => 'getDoca',               'columnSize'=> 'td-70',  'show' => true],
+    'invoice'              => ['name' => 'invoice',               'label'=> 'NF',             'order' => 19, 'value' => 'getNf',                 'columnSize'=> 'td-70',  'show' => true],
+    'pallets'              => ['name' => 'pallets',               'label'=> 'Paletes',        'order' => 21, 'value' => 'getCargaQtde',          'columnSize'=> 'td-70',  'show' => true],
+];
 
 $scheduleController = new ScheduleController($MySQLi);
 
@@ -34,28 +51,6 @@ if(isset($_POST['startDate']) && $_POST['startDate'] != null){
     $startDate = $_POST['startDate'];
     $endDate = $_POST['endDate'];
 }
-
-// if(isset($_POST['order-action']) && $_POST['order-action'] != null){
-
-//     if(isset($_POST['column']) && count($_POST['column']) > 0){
-        
-//         $result = $scheduleController->savePreferences($columns, $_POST);
-
-//         switch ($result) {
-//             case 'SAVED':
-//                 successAlert('Preferências salvas com sucesso!');
-//                 break;
-            
-//             case 'UPDATED':
-//                 successAlert('Preferências atualizadas com sucesso!');
-//                 break;
-            
-//             case 'SAVE_ERROR':
-//                 errorAlert('Ocorreu um erro ao salvar a preferência. Tente novamente ou entre em contato com o administrador.');
-//                 break;
-//         }
-//     }
-// }
 
 $schedules = $scheduleController->findByClientStatusStartDateAndEndDate($_SESSION['customerName'], 'Todos', $startDate, $endDate);
 
@@ -96,20 +91,11 @@ foreach ($schedules as $schedule) {
                 'att_other_status' => $schedule['getAttOtherStatus'] ?? 'open',
                 'scaneado' => $schedule['getScaneado'] ?? 'Não',
                 'carga_em_qualidade' => $schedule['getCargaEmQualidade'] ?? 'Não',
-                'carregando_ou_rejeitado' => $schedule['getCarregandoOuRejeitado'] ?? '',
-                'documentos' => $schedule['getDocumentos'] ?? 'aguardando',
                 'has_invoice' => $schedule['has_invoice'] ?? false,
                 'has_picking' => $schedule['has_picking'] ?? false,
                 'has_certificate' => $schedule['has_certificate'] ?? false,
                 'has_boarding' => $schedule['has_boarding'] ?? false,
-                'has_other' => $schedule['has_other'] ?? false,
-                'status' => $schedule['getStatus'] ?? '',
-                'nf' => $schedule['getNf'] ?? '',
-                'hora_chegada' => $schedule['getHoraChegada'] ?? '',
-                'data_inicio_operacao' => $schedule['getInicioOperacao'] ?? '',
-                'data_fim_operacao' => $schedule['getFimOperacao'] ?? '',
-                'saida' => $schedule['getSaida'] ?? '',
-                'tempo_espera' => ''
+                'has_other' => $schedule['has_other'] ?? false
             ];
     
     // Check if carga is scaneada - se for, adiciona apenas ao card "Cargas Scaneadas"
@@ -203,8 +189,6 @@ foreach ($schedules as $schedule) {
 }
 
 ?>
-
-<body onload="progressTimer()">
     <div class="row">
         <div class="col-lg-12">
             <div class="panel-title">
@@ -217,29 +201,40 @@ foreach ($schedules as $schedule) {
                 </div>
             </div>
             <div class="functions-group">
-                <form method="post" id="panel-form" action="index.php?conteudo=panel.php&startDate=<?=$startDate?>&endDate=<?=$endDate?>">
-                    <div class="row-element-group">
-                        <div class="form-group">
-                            <label>Data inicial</label>
-                            <div class='input-group date' id='datetimepicker1'>
-                                <input name="startDate" id="startDate" type='text' data-date-format="DD/MM/YYYY HH:mm:ss" class="form-control" value="<?=$startDate ?>" onblur="dateTimeHandleBlur(this)" required  minlength="19" maxlength="19" />
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <form method="post" id="panel-form" action="index.php?conteudo=panel.php&startDate=<?=$startDate?>&endDate=<?=$endDate?>" style="margin: 0;">
+                        <div class="row-element-group" style="display: flex; gap: 15px;">
+                            <div class="form-group">
+                                <label>Data inicial</label>
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <input name="startDate" id="startDate" type='text' data-date-format="DD/MM/YYYY HH:mm:ss" class="form-control" value="<?=$startDate ?>" onblur="dateTimeHandleBlur(this)" required  minlength="19" maxlength="19" />
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Data final</label>
+                                <div class='input-group date' id='datetimepicker1'>
+                                    <input name="endDate" id="endDate" type='text' data-date-format="DD/MM/YYYY HH:mm:ss" class="form-control" onblur="dateTimeHandleBlur(this)" value="<?=$endDate ?>" minlength="19" maxlength="19"  required/>
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-primary">Buscar</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label>Data final</label>
-                            <div class='input-group date' id='datetimepicker1'>
-                                <input name="endDate" id="endDate" type='text' data-date-format="DD/MM/YYYY HH:mm:ss" class="form-control" onblur="dateTimeHandleBlur(this)" value="<?=$endDate ?>" minlength="19" maxlength="19"  required/>
-                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
+                    </form>
+                    <div class="form-group" style="margin-left: auto;">
+                        <label>&nbsp;</label>
+                        <div style="text-align: center;">
+                            <button id="toggle-btn" class="btn btn-primary" onclick="toggleView()">QUADRO</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
@@ -247,9 +242,6 @@ foreach ($schedules as $schedule) {
         <div class="col-lg-12">
             <div class="panel-title">
                 <h1 class="display-2">Agendamentos</h1>
-                <div style="margin-left: auto;">
-                    <button id="toggleViewBtn" class="btn btn-primary" onclick="toggleView()">Quadro</button>
-                </div>
             </div>
             <div class="label-terminal-panel">
                 <div>
@@ -257,7 +249,8 @@ foreach ($schedules as $schedule) {
                     
                 </div>
             </div>
-            <div id="cardView">
+            
+            <div id="cards-view">
                 <div class="panel-home">
                     <div class="card-wrapper">
                         <div class="schedule-box-status box-gray" onclick="navigateToSearch('Agendado')">
@@ -314,102 +307,117 @@ foreach ($schedules as $schedule) {
                         </div>
                     </div>
                 </div>
+                <div class="panel-progress">
+                    <progress id="panel-progress-cards" value="60000" max="60000"></progress>
+                </div>
             </div>
-            <div id="tableView" style="display: none;">
-                <table class="table table-striped table-bordered" style="margin-top: 20px;">
-                    <thead style="background-color: #337ab7; color: white;">
-                        <tr>
-                            <th>Carregamento BS</th>
-                            <th>Destino</th>
-                            <th>Janela</th>
-                            <th>Lançamento de carga?</th>
-                            <th>Carga escaneada?</th>
-                            <th>Chegada de veículo (Faturar)</th>
-                            <th>NF no site?</th>
-                            <th>Carregando ou rejeitado?</th>
-                            <th>Documentos ok ou aguardando?</th>
-                            <th>Tempo de espera</th>
-                            <th>Saída</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        // Collect all shipments for the table
-                        $allShipments = [];
-                        foreach ($statusData as $status => $data) {
-                            if (isset($data['shipments'])) {
-                                $allShipments = array_merge($allShipments, $data['shipments']);
-                            }
-                        }
-                        foreach ($allShipments as $shipment): 
-                            // Determine colors for cells
-                            $lancamentoCargaBg = ($shipment['carga_em_qualidade'] === 'Sim') ? '#52d772' : '#e74c3c';
-                            $cargaEscaneadaBg = ($shipment['scaneado'] === 'Sim') ? '#52d772' : '#e74c3c';
-                            $chegadaVeiculoBg = 'yellow'; // Based on status?
-                            $nfNoSiteBg = ($shipment['has_invoice'] || $shipment['att_invoice_status'] === 'closed') ? '#52d772' : '#e74c3c';
-                            $carregandoBg = ($shipment['carregando_ou_rejeitado'] === 'CARREGANDO') ? '#52d772' : 
-                                             ($shipment['carregando_ou_rejeitado'] === 'REJEITADO') ? '#e74c3c' : 'white';
-                            $documentosBg = ($shipment['documentos'] === 'ok') ? '#52d772' : '#e74c3c';
-                            $tempoEsperaBg = 'red'; // Default
-                            $saidaBg = 'green';
-                        ?>
-                        <tr>
-                            <td><?=htmlspecialchars($shipment['shipment_id'] ?? '') ?></td>
-                            <td><?=htmlspecialchars($shipment['cidade'] ?? '') ?></td>
-                            <td><?=htmlspecialchars($shipment['data_agendamento'] ?? '') ?></td>
-                            <td style="background-color: <?=$lancamentoCargaBg ?>; color: white; font-weight: bold; text-align: center;">
-                                <?=htmlspecialchars($shipment['carga_em_qualidade'] ?? 'Não') ?>
-                            </td>
-                            <td style="background-color: <?=$cargaEscaneadaBg ?>; color: white; font-weight: bold; text-align: center;">
-                                <?=htmlspecialchars($shipment['scaneado'] ?? 'Não') ?>
-                            </td>
-                            <td style="background-color: <?=$chegadaVeiculoBg ?>; color: black; font-weight: bold; text-align: center;">
-                                FATURAR
-                            </td>
-                            <td style="background-color: <?=$nfNoSiteBg ?>; color: white; font-weight: bold; text-align: center;">
-                                <?=($shipment['has_invoice'] || $shipment['att_invoice_status'] === 'closed') ? 'SIM' : 'NÃO' ?>
-                            </td>
-                            <td style="background-color: <?=$carregandoBg ?>; color: <?=$carregandoBg === 'white' ? 'black' : 'white' ?>; font-weight: bold; text-align: center;">
-                                <?=htmlspecialchars($shipment['carregando_ou_rejeitado'] ?? '') ?>
-                            </td>
-                            <td style="background-color: <?=$documentosBg ?>; color: white; font-weight: bold; text-align: center;">
-                                <?=htmlspecialchars(strtoupper($shipment['documentos'] ?? 'aguardando')) ?>
-                            </td>
-                            <td style="background-color: <?=$tempoEsperaBg ?>; color: white; font-weight: bold; text-align: center;">
-                                <?=htmlspecialchars($shipment['tempo_espera'] ?? '') ?>
-                            </td>
-                            <td style="background-color: <?=$saidaBg ?>; color: white; font-weight: bold; text-align: center;">
-                                <?=htmlspecialchars($shipment['saida'] ?? '') ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="panel-progress">
-                <progress id="panel-progress" value="60000" max="60000"></progress>
+            
+            <div id="quadro-view" style="display: none;">
+                <div class="panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Quadro de Agendamentos</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Carregamento BS</th>
+                                        <th>Destino</th>
+                                        <th>Janela</th>
+                                        <th>Lançamento de carga?</th>
+                                        <th>Carga escaneada?</th>
+                                        <th>Chegada de veículo (Faturar)</th>
+                                        <th>NF no site?</th>
+                                        <th>Carregando ou rejeitado?</th>
+                                        <th>Documentos ok ou aguardando?</th>
+                                        <th>Tempo de espera</th>
+                                        <th>Saída</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($schedules as $schedule): ?>
+                                        <tr>
+                                            <td><?php echo strtoupper($schedule['getShipmentId']); ?></td>
+                                            <td><?php echo strtoupper($schedule['getCidade']); ?></td>
+                                            <td><?php echo strtoupper($schedule['getDataAgendamento']); ?></td>
+                                            <td style="background-color: <?php echo $schedule['has_picking'] ? '#4CAF50' : '#F44336'; ?>; color: white; text-align: center;">
+                                                <?php echo $schedule['has_picking'] ? 'SIM' : 'NÃO'; ?>
+                                            </td>
+                                            <td style="background-color: <?php echo $schedule['getScaneado'] == 'Sim' ? '#4CAF50' : ($schedule['getScaneado'] == 'Não' ? '#F44336' : ''); ?>; color: white; text-align: center;">
+                                                <?php echo strtoupper($schedule['getScaneado']); ?>
+                                            </td>
+                                            <td style="background-color: <?php echo $schedule['has_invoice'] ? '#4CAF50' : '#FFC107'; ?>; color: <?php echo $schedule['has_invoice'] ? 'white' : 'black'; ?>; text-align: center;">
+                                                <?php echo $schedule['has_invoice'] ? 'SIM' : 'FATURAR'; ?>
+                                            </td>
+                                            <td style="background-color: <?php echo $schedule['has_invoice'] ? '#4CAF50' : '#F44336'; ?>; color: white; text-align: center;">
+                                                <?php echo $schedule['has_invoice'] ? 'SIM' : 'NÃO'; ?>
+                                            </td>
+                                            <td style="background-color: <?php echo strtoupper($schedule['getCarregandoOuRejeitado']) == 'CARREGANDO' ? '#4CAF50' : (strtoupper($schedule['getCarregandoOuRejeitado']) == 'REJEITADO' ? '#F44336' : ''); ?>; color: white; text-align: center;">
+                                                <?php echo strtoupper($schedule['getCarregandoOuRejeitado']); ?>
+                                            </td>
+                                            <td style="background-color: <?php echo strtoupper($schedule['getDocumentos']) == 'OK' ? '#4CAF50' : '#337ab7'; ?>; color: white; text-align: center;">
+                                                <?php echo strtoupper($schedule['getDocumentos']) == 'OK' ? 'OK' : 'AGUARDANDO'; ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                $saida = $schedule['getSaida'];
+                                                $carregandoOuRejeitado = $schedule['getCarregandoOuRejeitado'];
+                                                $horaChegada = $schedule['getHoraChegada'];
+                                                
+                                                // Verifica se tem hora de saída OU está REJEITADO
+                                                $temSaida = $saida != '';
+                                                $estaRejeitado = strtoupper($carregandoOuRejeitado) == 'REJEITADO';
+                                                
+                                                if (!$temSaida && !$estaRejeitado && $horaChegada) {
+                                                    // Usa DateTime para garantir o formato correto (dd/mm/aaaa HH:MM:SS)
+                                                    $chegadaDateTime = DateTime::createFromFormat('d/m/Y H:i:s', $horaChegada);
+                                                    if ($chegadaDateTime) {
+                                                        $agora = new DateTime();
+                                                        $diff = $agora->getTimestamp() - $chegadaDateTime->getTimestamp();
+                                                        
+                                                        if ($diff > 0) {
+                                                            $horas = floor($diff / 3600);
+                                                            $minutos = floor(($diff % 3600) / 60);
+                                                            echo strtoupper("$horas h $minutos min");
+                                                        }
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td><?php echo strtoupper($schedule['getSaida']); ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="panel-progress">
+                            <progress id="panel-progress" value="60000" max="60000"></progress>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 <script>
-$(document).ready(function() {
-    console.log('Document ready');
-});
-
 function toggleView() {
-    const cardView = document.getElementById('cardView');
-    const tableView = document.getElementById('tableView');
-    const toggleBtn = document.getElementById('toggleViewBtn');
+    var cardsView = document.getElementById('cards-view');
+    var quadroView = document.getElementById('quadro-view');
+    var btn = document.getElementById('toggle-btn');
     
-    if (cardView.style.display !== 'none') {
-        cardView.style.display = 'none';
-        tableView.style.display = 'block';
-        toggleBtn.textContent = 'Cards';
+    if (quadroView.style.display === 'none') {
+        quadroView.style.display = 'block';
+        cardsView.style.display = 'none';
+        btn.textContent = 'CARDS';
     } else {
-        cardView.style.display = 'block';
-        tableView.style.display = 'none';
-        toggleBtn.textContent = 'Quadro';
+        quadroView.style.display = 'none';
+        cardsView.style.display = 'block';
+        btn.textContent = 'QUADRO';
     }
 }
+
+$(document).ready(function() {
+    console.log('Document ready');
+    progressTimer(); // Inicia o timer quando o documento estiver pronto
+});
 </script>
-</body>
