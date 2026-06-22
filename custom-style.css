@@ -658,34 +658,6 @@ td{
     color: #000000 !important;
 }
 
-.shipment-item {
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.shipment-item[style*="cursor: pointer"]:hover {
-    background-color: rgba(82, 215, 114, 0.1);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.card-details-grid {
-    grid-template-columns: 1fr;
-}
-
-.card-details-grid .shipment-item {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    padding: 8px 0;
-    align-items: start;
-}
-
-.card-details-grid .shipment-item .detail-item {
-    border-bottom: none;
-    padding-bottom: 0;
-    margin-bottom: 0;
-}
-
 /* Card Principal (sem duplicatas) */
 .schedule-box-status{
     text-decoration: none !important;
