@@ -34,7 +34,7 @@ $columns = [
     'operator'             => ['name' => 'operator',              'label' => 'Operador',       'order' => 24, 'value' => 'getOperator',           'columnSize' => 'td-150', 'show' => $fieldsAccess],
     'checker'              => ['name' => 'checker',               'label' => 'Conferente',     'order' => 25, 'value' => 'getChecker',            'columnSize' => 'td-150', 'show' => $fieldsAccess],
     'scaneado'             => ['name' => 'scaneado',              'label' => 'Scaneado',       'order' => 26, 'value' => 'getScaneado',           'columnSize' => 'td-70',  'show' => true],
-    'carga_em_qualidade'   => ['name' => 'carga_em_qualidade',    'label' => 'Carga em Qual.', 'order' => 27, 'value' => 'getCargaEmQualidade',   'columnSize' => 'td-70',  'show' => true],
+    'carga_em_qualidade'   => ['name' => 'carga_em_qualidade',    'label' => 'Material liberado?', 'order' => 27, 'value' => 'getCargaEmQualidade',   'columnSize' => 'td-70',  'show' => true],
 ];
 
 $scheduleController = new ScheduleController($MySQLi);
