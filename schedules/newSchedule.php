@@ -419,7 +419,7 @@ $statusFieldColor = ($schedule->getStatus() == 'Liberado') ? 'success-text-field
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label>Carga em Qualidade</label>
+                                        <label>Material liberado?</label>
                                         <select name="carga_em_qualidade" class="form-control" <?=$readonly ?> id="carga_em_qualidade">
                                             <option value="Não" <?=$schedule->getCargaEmQualidade() == 'Não' ? 'selected' : '' ?>>Não</option>
                                             <option value="Sim" <?=$schedule->getCargaEmQualidade() == 'Sim' ? 'selected' : '' ?>>Sim</option>
@@ -799,6 +799,11 @@ $statusFieldColor = ($schedule->getStatus() == 'Liberado') ? 'success-text-field
                     </div> 
                     <input id="filesToRemove" name="filesToRemove" type="hidden" value="">
                     <div class="btn-group-end">
+                        <?php if(isset($_GET['search']) && $_GET['search'] != null): ?>
+                            <a href="index.php?customer=<?=$_SESSION['customerName']?>&conteudo=newSchedule.php&edit=<?=$scheduleId ?>" class="btn btn-warning">
+                                <span class="glyphicon glyphicon-pencil"></span> Habilitar Edição
+                            </a>
+                        <?php endif; ?>
                         <button id="btn-salvar" type="submit" class="btn btn-primary" <?=$disabled ?>>Salvar</button>
                         <button id="btn-delete" type="button" class="<?=$deleteButtonStyle ?>" data-toggle="modal" data-target="#confirmModal">Excluir</button>
                         <a href="index.php?conteudo=searchSchedule.php" type="reset" class="btn btn-light">Cancelar</a> 
