@@ -397,6 +397,17 @@ foreach ($schedules as $schedule) {
         #main-content.panel-expanded-mode .btn-panel-collapse {
             display: inline-block !important;
         }
+        
+        @keyframes blink-red {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: #ffcccc; }
+        }
+        
+        .tempo-espera-alerta {
+            animation: blink-red 1s infinite;
+            color: #ff0000;
+            font-weight: bold;
+        }
     </style>
     <div class="row">
         <div class="col-lg-12">
@@ -587,8 +598,7 @@ foreach ($schedules as $schedule) {
                                             <td style="background-color: <?php echo strtoupper($schedule['getDocumentos']) == 'OK' ? '#4CAF50' : '#337ab7'; ?> !important; color: white !important; text-align: center;">
                                                 <?php echo strtoupper($schedule['getDocumentos']) == 'OK' ? 'OK' : 'AGUARDANDO'; ?>
                                             </td>
-                                            <td>
-                                                <?php 
+                                            <td class="<?php
                                                 $saida = $schedule['getSaida'];
                                                 $carregandoOuRejeitado = $schedule['getCarregandoOuRejeitado'];
                                                 $horaChegada = $schedule['getHoraChegada'];
@@ -596,6 +606,8 @@ foreach ($schedules as $schedule) {
                                                 // Verifica se tem hora de saída OU está REJEITADO
                                                 $temSaida = $saida != '';
                                                 $estaRejeitado = strtoupper($carregandoOuRejeitado) == 'REJEITADO';
+                                                $classeAlerta = '';
+                                                $exibirTempo = '';
                                                 
                                                 if(!$temSaida && !$estaRejeitado && $horaChegada) {
                                                     // Usa DateTime para garantir o formato correto (dd/mm/aaaa HH:MM:SS)
@@ -607,11 +619,25 @@ foreach ($schedules as $schedule) {
                                                         if($diff > 0) {
                                                             $horas = floor($diff / 3600);
                                                             $minutos = floor(($diff % 3600) / 60);
-                                                            echo strtoupper("$horas h $minutos min");
+                                                            $exibirTempo = strtoupper("$horas h $minutos min");
+                                                            
+                                                            // Verifica se passou de 1h40 (6000 segundos)
+                                                            if($diff > 6000) {
+                                                                $classeAlerta = 'tempo-espera-alerta';
+                                                            }
                                                         }
                                                     }
                                                 }
-                                                ?>
+                                                
+                                                echo $classeAlerta;
+                                            ?>" data-tempo-espera="<?php
+                                                if(isset($chegadaDateTime)) {
+                                                    $agora = new DateTime();
+                                                    $diff = $agora->getTimestamp() - $chegadaDateTime->getTimestamp();
+                                                    echo $diff;
+                                                }
+                                            ?>">
+                                                <?php echo $exibirTempo; ?>
                                             </td>
                                             <td><?php echo strtoupper($schedule['getSaida']); ?></td>
                                         </tr>
