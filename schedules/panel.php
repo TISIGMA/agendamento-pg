@@ -54,6 +54,24 @@ if(isset($_POST['startDate']) && $_POST['startDate'] != null){
 
 $schedules = $scheduleController->findByClientStatusStartDateAndEndDate($_SESSION['customerName'], 'Todos', $startDate, $endDate);
 
+// Ordenar agendamentos: mais antigos primeiro, rejeitados por último
+usort($schedules, function($a, $b) {
+    // Verificar se são rejeitados
+    $aRejeitado = strtoupper($a['getCarregandoOuRejeitado']) === 'REJEITADO';
+    $bRejeitado = strtoupper($b['getCarregandoOuRejeitado']) === 'REJEITADO';
+    
+    if ($aRejeitado && !$bRejeitado) return 1; // a é rejeitado, b não é → a vem depois
+    if (!$aRejeitado && $bRejeitado) return -1; // b é rejeitado, a não é → b vem depois
+    
+    // Se ambos são rejeitados ou ambos não são, ordenar por data da janela (mais antigo primeiro)
+    $dataA = DateTime::createFromFormat('d/m/Y H:i:s', $a['getDataAgendamento']);
+    $dataB = DateTime::createFromFormat('d/m/Y H:i:s', $b['getDataAgendamento']);
+    
+    if (!$dataA || !$dataB) return 0;
+    
+    return $dataA->getTimestamp() - $dataB->getTimestamp();
+});
+
 $scheduled = 0;
 $waiting = 0;
 $inOperation = 0;
