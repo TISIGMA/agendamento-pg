@@ -564,7 +564,6 @@ foreach ($schedules as $schedule) {
                                         <th>Carregando ou rejeitado?</th>
                                         <th>Documentos ok ou aguardando?</th>
                                         <th>Tempo de espera</th>
-                                        <th>Saída</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -639,7 +638,6 @@ foreach ($schedules as $schedule) {
                                             ?>">
                                                 <?php echo $exibirTempo; ?>
                                             </td>
-                                            <td><?php echo strtoupper($schedule['getSaida']); ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
