@@ -8,7 +8,7 @@ if (!file_exists($autoloadPath)) {
 }
 require_once $autoloadPath;
 
-$isProduction = false;
+$isProduction = true;
 
 $productionConn = array(
     'servidor' => '10.15.1.120',
